@@ -3,5 +3,5 @@
 ## Team Members
 
 - Ayush Nair
-- Khue Do Anh Nguyen
+- Khue Do Anh Nguyen (updated a change)
 - Chinmayi Lokeshwar Hegde

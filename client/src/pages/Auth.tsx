@@ -7,6 +7,7 @@ import { CardActions, CardContent } from "@mui/material";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { useTheme } from "@emotion/react";
+import { CustomTheme } from "../theme";
 
 interface AuthProps {
   type: "login" | "signup";
@@ -17,7 +18,7 @@ const Login: React.FC<AuthProps> = ({ type }: AuthProps) => {
   const [email, setEmail] = useState<string>("");
   const [cpassword, setCPassword] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const theme = useTheme();
+  const theme: CustomTheme = useTheme() as CustomTheme;
 
   const linkButtonText: string =
     type === "login" ? "New User? Click here." : "Existing User? Click here";

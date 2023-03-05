@@ -10,11 +10,12 @@ import {
   Typography,
 } from "@mui/material";
 import { Link } from "react-router-dom";
+import { CustomTheme } from "../theme";
 
 interface DisplayCardProps {
-  label?: string;
-  navigateTo?: string;
-  imageURL?: string;
+  label: string;
+  navigateTo: string;
+  imageURL: string;
   budget?: string | number;
   numDays?: number;
 }
@@ -26,60 +27,59 @@ const DisplayCard = ({
   budget,
   numDays,
 }: DisplayCardProps) => {
-  const theme = useTheme();
+  const theme: CustomTheme = useTheme() as CustomTheme;
   return (
-    <Card
+    <Box
+      p={0.5}
       sx={{
         position: "relative",
-        "&:hover button": { opacity: 1 },
-        "&:hover img": { filter: "blur(2px)" },
-        transition: "filter 0.3s ease;",
+        "&:hover": {
+          borderColor: theme.palette.secondary.main,
+        },
+        "&:hover button": {
+          opacity: "1",
+        },
+        "&:hover img": {
+          filter: "blur(2px)",
+        },
+        border: 1.5,
+        borderRadius: 1,
+        borderColor:
+          theme.palette.mode === "light"
+            ? "white"
+            : theme.palette.background.default,
+        transition:
+          "border 0.3s ease, border-color 0.3s ease, border-radius 0.3s ease, opacity 0.3s ease",
       }}
     >
-      <CardMedia
-        component="img"
-        height="140"
-        image={imageURL}
-        alt="green iguana"
-      />
-      <CardContent
-        sx={{ display: "flex", gap: 1, justifyContent: "space-between" }}
-      >
-        <Typography>{label}</Typography>
-        <Box display={"flex"} alignItems={"center"} gap={theme.spacing(0.5)}>
-          {budget && (
-            <Typography variant="subtitle2" sx={{ fontStyle: "italic" }}>
-              {"$".repeat(+budget)}
-            </Typography>
-          )}
-          {(budget || numDays) && <>&#9900;</>}
-          {numDays && (
-            <>
-              <Typography variant="subtitle2">{numDays}</Typography>
+      <Link to={navigateTo}>
+        <Fab
+          size="small"
+          color="secondary"
+          aria-label="add"
+          sx={{ position: "absolute", right: 0, top: 0, m: 2, opacity: 0 }}
+        >
+          <ArrowForwardRounded />
+        </Fab>
+      </Link>
+      <Card>
+        <CardMedia component="img" height="140" image={imageURL} alt={label} />
+      </Card>
+      <Box>
+        <Typography sx={{ fontWeight: "bold", fontStyle: "italic", pt: 1 }}>
+          {label}
+        </Typography>
+        {budget && (
+          <Box display={"flex"} gap={1}>
+            <Typography variant="subtitle2">{"$".repeat(+budget)}</Typography>
+            <Box display={"flex"}>
               <Event />
-            </>
-          )}
-        </Box>
-        <Link to={navigateTo}>
-          <Fab
-            size="small"
-            color="secondary"
-            aria-label="go-to-plan"
-            sx={{
-              m: 1,
-              position: "absolute",
-              top: 0,
-              right: 0,
-              opacity: 0,
-              zIndex: 1,
-              transition: "opacity 0.2s ease",
-            }}
-          >
-            <ArrowForwardRounded />
-          </Fab>
-        </Link>
-      </CardContent>
-    </Card>
+              <Typography variant="subtitle2">{numDays}</Typography>
+            </Box>
+          </Box>
+        )}
+      </Box>
+    </Box>
   );
 };
 

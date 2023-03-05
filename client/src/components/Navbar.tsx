@@ -17,13 +17,17 @@ import * as React from "react";
 import { useTheme } from "@emotion/react";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
+import { useMediaQuery } from "@mui/material";
+import { CustomTheme } from "../theme";
 
-const pages = ["Products", "Pricing", "Blog"];
-const settings = ["Profile", "Account", "Dashboard", "Logout"];
+const pages = ["Dashboard", "Account", "Contact Us"];
+const pageURLs = ["/dashboard", "account", "contact-us"];
+const settings = ["Logout"];
 
 function Navbar() {
   const colorMode = React.useContext(ColorModeContext);
-  const theme = useTheme();
+  const theme: CustomTheme = useTheme() as CustomTheme;
+  const belowSmMatches = useMediaQuery(theme.breakpoints.down("sm"));
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
     null
   );
@@ -69,7 +73,12 @@ function Navbar() {
             </Link>
           </Typography>
 
-          <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
+          {/* <Box
+            sx={{
+              flexGrow: 1,
+              display: { xs: "flex", md: "none" },
+            }}
+          >
             <IconButton
               size="large"
               aria-label="account of current user"
@@ -104,7 +113,7 @@ function Navbar() {
                 </MenuItem>
               ))}
             </Menu>
-          </Box>
+          </Box> */}
           <AdbIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
           <Typography
             variant="h5"
@@ -124,15 +133,26 @@ function Navbar() {
           >
             EXPLORE MATE
           </Typography>
-          <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-            {pages.map((page) => (
-              <Button
+          <Box
+            sx={{
+              flexGrow: 1,
+              display: { xs: "none", md: "flex" },
+              justifyContent: "flex-end",
+            }}
+          >
+            {pages.map((page, key) => (
+              <Link
+                to={pageURLs[key]}
                 key={page}
-                onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: "white", display: "block" }}
+                style={{ textDecoration: "none" }}
               >
-                {page}
-              </Button>
+                <Button
+                  onClick={handleCloseNavMenu}
+                  sx={{ my: 2, color: "white", display: "block" }}
+                >
+                  {page}
+                </Button>
+              </Link>
             ))}
           </Box>
 
@@ -171,6 +191,14 @@ function Navbar() {
                   </>
                 )}
               </MenuItem>
+              {belowSmMatches &&
+                pages.map((page, key) => (
+                  <MenuItem key={page} onClick={handleCloseUserMenu}>
+                    <Link to={pageURLs[key]}>
+                      <Typography textAlign="center">{page}</Typography>
+                    </Link>
+                  </MenuItem>
+                ))}
               {settings.map((setting) => (
                 <MenuItem key={setting} onClick={handleCloseUserMenu}>
                   <Typography textAlign="center">{setting}</Typography>

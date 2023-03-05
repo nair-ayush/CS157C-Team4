@@ -1,5 +1,5 @@
 import { red } from "@mui/material/colors";
-import { createTheme, PaletteMode } from "@mui/material";
+import { createTheme, PaletteMode, Theme } from "@mui/material";
 
 const getDesignTokens = (mode: PaletteMode) => ({
   palette: {
@@ -31,6 +31,11 @@ const getDesignTokens = (mode: PaletteMode) => ({
   },
 });
 
-export default function theme(mode: PaletteMode) {
-  return createTheme(getDesignTokens(mode));
+export interface CustomTheme extends Theme {
+  palette: any;
+  background: any;
+  breakpoints: any;
+}
+export default function theme(mode: PaletteMode): CustomTheme {
+  return createTheme(getDesignTokens(mode)) as CustomTheme;
 }

@@ -21,12 +21,13 @@ import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { Moment } from "moment";
 import { useState } from "react";
 import Navbar from "../components/Navbar";
-import { Place, SearchOutlined } from "@mui/icons-material";
+import { Place, SearchOutlined, TrendingUp } from "@mui/icons-material";
 import { MobileDatePicker } from "@mui/x-date-pickers";
 import DisplayCard from "../components/DisplayCard";
+import { CustomTheme } from "../theme";
 
 const Home = () => {
-  const theme = useTheme();
+  const theme: CustomTheme = useTheme() as CustomTheme;
   const [location, setLocation] = useState<string>("");
   const [budgetLevel, setBudgetLevel] = useState<string>("");
   const [checkInDate, setCheckInDate] = useState<Moment | null>(null);
@@ -45,7 +46,6 @@ const Home = () => {
     "Arcades",
     "Bars",
   ];
-
   const trendingLocations = [
     {
       label: "San Francisco",
@@ -147,7 +147,25 @@ const Home = () => {
   return (
     <>
       <Navbar></Navbar>
-      <Container maxWidth="xl" sx={{ my: 2, flex: "1 1 auto" }}>
+      <Box
+        sx={{
+          backgroundColor:
+            theme.palette.mode === "light"
+              ? theme.palette.primary.main
+              : theme.palette.background.default,
+          fontStyle: "italic",
+          textAlign: "center",
+          color: theme.palette.mode === "light" ? "white" : undefined,
+        }}
+        p={3}
+        display={"flex"}
+        flexDirection={"column"}
+        alignItems={"center"}
+        gap={1}
+      >
+        <Typography variant={belowMdMatches ? "h4" : "h2"}>
+          Designing Experiences for <strong>everyone</strong>!
+        </Typography>
         <Card variant="outlined">
           <CardContent>
             <form
@@ -374,13 +392,19 @@ const Home = () => {
             </Box>
           </CardContent>
         </Card>
+        <Typography variant={belowMdMatches ? "h5" : "h3"} color="lightgrey">
+          <q>Create a plan for your trip today and travel tension-free!</q>
+        </Typography>
+      </Box>
+      <Container maxWidth="xl" sx={{ my: 2, flex: "1 1 auto" }}>
         <Box>
           <Box
             pt={2}
             display={"flex"}
-            justifyContent={"space-between"}
+            // justifyContent={"space-between"}
             alignItems={"center"}
           >
+            <TrendingUp color="secondary" />
             <Typography
               variant="h5"
               sx={{ fontStyle: "italic" }}

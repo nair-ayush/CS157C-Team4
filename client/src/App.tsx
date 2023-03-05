@@ -1,34 +1,45 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import './App.css'
+import { ThemeProvider } from "@emotion/react";
+import { CssBaseline, PaletteMode } from "@mui/material";
+import { useState, createContext, useMemo } from "react";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import Auth from "./pages/Auth";
+import ErrorPage from "./pages/ErrorPage";
+import Home from "./pages/Home";
+import theme from "./theme";
 
-function App() {
-  const [count, setCount] = useState(0)
+export const ColorModeContext = createContext({ toggleColorMode: () => {} });
+
+const router = createBrowserRouter([
+  { path: "/", element: <Home />, errorElement: <ErrorPage /> },
+  { path: "/auth/login", element: <Auth type="login" /> },
+  { path: "/auth/signup", element: <Auth type="signup" /> },
+]);
+
+const App = () => {
+  const [mode, setMode] = useState<PaletteMode>("light");
+  const colorMode = useMemo(
+    () => ({
+      // The dark mode switch would invoke this method
+      toggleColorMode: () => {
+        setMode((prevMode: PaletteMode) =>
+          prevMode === "light" ? "dark" : "light"
+        );
+      },
+    }),
+    []
+  );
+  const appTheme = useMemo(() => theme(mode), [mode]);
 
   return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </div>
-  )
-}
+    <>
+      <ColorModeContext.Provider value={colorMode}>
+        <ThemeProvider theme={appTheme}>
+          <CssBaseline />
+          <RouterProvider router={router}></RouterProvider>
+        </ThemeProvider>
+      </ColorModeContext.Provider>
+    </>
+  );
+};
 
-export default App
+export default App;

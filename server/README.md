@@ -5,7 +5,7 @@ If you're using a virtual environment, set one up and then execute the following
 ```sh
 # assume you are in the app directory.
 cd server/
-pip install -r requirements.text
+pip install -r requirement.text
 ```
 
 Create a keyspace in your local Cassandra installation called `exploremate`

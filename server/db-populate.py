@@ -4,6 +4,7 @@ from app.models.listing import Listing
 from app.models.activity import Activity, Amenity
 from app.models.user import User
 from config import Config
+from hashlib import sha256 as hash
 
 
 def insert_dummy_data():
@@ -12,11 +13,11 @@ def insert_dummy_data():
 
         # Users
         User.create(name='Ayush Nair',
-                    username='ayush@gmail.com', password='123456')
+                    username='ayush@gmail.com', password=hash('123456'.encode()).hexdigest())
         User.create(name='Chinmayi Hegde',
-                    username='chinmayi@gmail.com', password='123456')
+                    username='chinmayi@gmail.com', password=hash('123456'.encode()).hexdigest())
         User.create(name='Khue Nguyen',
-                    username='khue@gmail.com', password='123456')
+                    username='khue@gmail.com', password=hash('123456'.encode()).hexdigest())
 
         # Listings
         Listing.create(name='Hotel De Anza',

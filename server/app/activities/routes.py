@@ -1,9 +1,11 @@
 from app.activities import bp
+from app.models.activity import Activity
 
 
 @bp.get('/')
 def get_all_activities():
-    return {"message": "This is the activities GET endpoint"}
+    queryset = Activity.all()
+    return {"data": [q.json for q in queryset]}
 
 
 @bp.get('/<int:activity_id>')

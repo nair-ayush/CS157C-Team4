@@ -1,9 +1,11 @@
 from app.listings import bp
+from app.models.listing import Listing
 
 
 @bp.get('/')
 def get_all_listings():
-    return {"message": "This is the Listing GET endpoint"}
+    queryset = Listing.all()
+    return {"data": [q.json for q in queryset]}
 
 
 @bp.get('/<int:listing_id>')

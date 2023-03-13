@@ -7,3 +7,13 @@ If you're using a virtual environment, set one up and then execute the following
 cd server/
 pip install -r requirements.text
 ```
+
+Create a keyspace in your local Cassandra installation called `exploremate`
+
+```db
+CREATE KEYSPACE exploremate WITH REPLICATION = {'class' : 'SimpleStrategy', 'replication_factor' : 1 };
+```
+
+```sh
+python db-populate.py
+```

@@ -8,7 +8,23 @@ import ErrorPage from "./pages/ErrorPage";
 import Home from "./pages/Home";
 import theme from "./theme";
 
+interface IAuthContext {
+  user: IUser | null;
+  updateUser: (user: IUser) => void;
+}
+
 export const ColorModeContext = createContext({ toggleColorMode: () => {} });
+export const AuthContext = createContext<IAuthContext>({
+  user: null,
+  updateUser: (user: IUser) => {},
+});
+
+export interface IUser {
+  id: string;
+  name: string;
+  username: string;
+  token: string;
+}
 
 const router = createBrowserRouter([
   { path: "/", element: <Home />, errorElement: <ErrorPage /> },
@@ -19,6 +35,14 @@ const router = createBrowserRouter([
 
 const App = () => {
   const [mode, setMode] = useState<PaletteMode>("light");
+  const [user, setUser] = useState<IUser>({
+    id: "",
+    name: "",
+    username: "",
+    token: "",
+  });
+
+  const updateUser = (user: IUser) => setUser(user);
   const colorMode = useMemo(
     () => ({
       // The dark mode switch would invoke this method
@@ -34,12 +58,14 @@ const App = () => {
 
   return (
     <>
-      <ColorModeContext.Provider value={colorMode}>
-        <ThemeProvider theme={appTheme}>
-          <CssBaseline />
-          <RouterProvider router={router}></RouterProvider>
-        </ThemeProvider>
-      </ColorModeContext.Provider>
+      <AuthContext.Provider value={{ user, updateUser }}>
+        <ColorModeContext.Provider value={colorMode}>
+          <ThemeProvider theme={appTheme}>
+            <CssBaseline />
+            <RouterProvider router={router}></RouterProvider>
+          </ThemeProvider>
+        </ColorModeContext.Provider>
+      </AuthContext.Provider>
     </>
   );
 };

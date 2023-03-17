@@ -2,7 +2,6 @@ import { useTheme } from "@emotion/react";
 import {
   Box,
   Button,
-  ButtonGroup,
   Card,
   CardContent,
   Chip,
@@ -25,7 +24,6 @@ import { Place, SearchOutlined, TrendingUp } from "@mui/icons-material";
 import { MobileDatePicker } from "@mui/x-date-pickers";
 import DisplayCard from "../components/DisplayCard";
 import { CustomTheme } from "../theme";
-import { listAllUsers } from "../api/usersApi";
 
 const eventFilters = [
   "Theme Parks",
@@ -135,15 +133,6 @@ const Home = () => {
   const [events, setEvents] = useState<string[]>([]);
   const belowMdMatches = useMediaQuery(theme.breakpoints.down("md"));
   const belowSmMatches = useMediaQuery(theme.breakpoints.down("sm"));
-
-  const initFetchUsers = async () => {
-    const users = await listAllUsers();
-    console.log(users);
-  };
-
-  useEffect(() => {
-    initFetchUsers();
-  }, []);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

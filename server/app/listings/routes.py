@@ -1,6 +1,6 @@
 from flask import request
 from app.listings import bp
-from app.models.listing import Listing
+from app.models.listing import Listing, User
 from cassandra.cqlengine.models import _DoesNotExist
 
 
@@ -10,7 +10,7 @@ def get_all_listings():
     return [q.json for q in queryset]
 
 
-@bp.get('/<int:listing_id>')
+@bp.get('/<uuid:listing_id>')
 def get_listing(listing_id):
     try:
         queryset = Listing.get(id=listing_id)
@@ -20,12 +20,12 @@ def get_listing(listing_id):
 
 
 @bp.post('/')
-def add_listing(body):
+def add_listing():
     body = request.get_json()
 
-    if all(key in body for key in ['name', 'location', 'price']):
+    if all(key in body for key in ['name', 'location', 'price', 'createdBy']):
         l = Listing(name=body['name'],
-                    location=body['location'], price=body['price'])
+                    location=body['location'], price=body['price'], created_by=User(id=body['createdBy']["id"], name=body['createdBy']["name"]))
     if body['amenities'] and len(body['amenities']):
         l.amenities = body['amenities']
     l.save()

@@ -4,6 +4,9 @@ from uuid import uuid4
 
 
 class User(db.Model):
+
+    __table_name__ = "users"
+
     id = db.columns.UUID(primary_key=True, default=uuid4)
     username = db.columns.Text(required=True, index=True)
     name = db.columns.Text(required=True)
@@ -16,6 +19,10 @@ class User(db.Model):
     def json(self):
         json_dict = dict(self)
         del json_dict['password']
+        json_dict['createdOn'] = self.created_on
+        del json_dict['created_on']
+        json_dict['updatedOn'] = self.updated_on
+        del json_dict['updated_on']
         return json_dict
 
     def __repr__(self):

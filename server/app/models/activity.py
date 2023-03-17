@@ -17,7 +17,6 @@ class User(db.UserType):
     def __self__(self):
         return f'<Activity Creator "{self.name} {self.id}">'
 
-
 class Amenity(db.UserType):
     type = db.columns.Text()
     value = db.columns.Text()
@@ -33,7 +32,7 @@ class Amenity(db.UserType):
 class Activity(db.Model):
 
     __table_name__ = "activities"
-
+    
     id = db.columns.UUID(primary_key=True, default=uuid4)
     name = db.columns.Text(required=True)
     location = db.columns.Text(required=True)

@@ -21,6 +21,7 @@ class User(db.UserType):
 class Listing(db.Model):
 
     __table_name__ = "listings"
+    
     id = db.columns.UUID(primary_key=True, default=uuid4)
     name = db.columns.Text(required=True)
     location = db.columns.Text(required=True)

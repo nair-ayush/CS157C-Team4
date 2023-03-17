@@ -16,6 +16,7 @@ def create_app(config_class=Config):
         from app.models.activity import Activity
         from app.models.listing import Listing
         from app.models.user import User
+        from app.models.plan import Plan
         db.sync_db()
 
         # Register blueprints here
@@ -27,6 +28,8 @@ def create_app(config_class=Config):
         app.register_blueprint(listings_bp, url_prefix='/api/listings')
         from app.activities import bp as activities_bp
         app.register_blueprint(activities_bp, url_prefix='/api/activities')
+        from app.plans import bp as plans_bp
+        app.register_blueprint(plans_bp, url_prefix='/api/plans')
 
         @app.route('/api')
         def test_page():

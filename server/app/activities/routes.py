@@ -1,6 +1,6 @@
 from flask import request
 from app.activities import bp
-from app.models.activity import Activity, Amenity
+from app.models.activity import Activity, Amenity, User
 from cassandra.cqlengine.models import _DoesNotExist
 
 
@@ -10,7 +10,7 @@ def get_all_activities():
     return [q.json for q in queryset]
 
 
-@bp.get('/<int:activity_id>')
+@bp.get('/<uuid:activity_id>')
 def get_activities(activity_id):
     try:
         queryset = Activity.get(id=activity_id)
@@ -22,8 +22,9 @@ def get_activities(activity_id):
 @bp.post('/')
 def add_activities():
     body = request.get_json()
-    if all(key in body for key in ['name', 'location']):
-        a = Activity(name=body['name'], location=body['location'])
+    if all(key in body for key in ['name', 'location', "createdBy"]):
+        a = Activity(name=body['name'], location=body['location'], created_by=User(
+            id=body['createdBy']["id"], name=body['createdBy']["name"]))
     if body['price']:
         a.price = body['price']
     if body['amenities'] and len(body['amenities']):

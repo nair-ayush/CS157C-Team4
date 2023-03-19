@@ -2,6 +2,7 @@ import { ThemeProvider } from "@emotion/react";
 import { CssBaseline, PaletteMode } from "@mui/material";
 import { useState, createContext, useMemo } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import useLocalStorage from "./hooks/useLocalStorage";
 import Auth from "./pages/Auth";
 import ContactUs from "./pages/ContactUs";
 import ErrorPage from "./pages/ErrorPage";
@@ -34,15 +35,14 @@ const router = createBrowserRouter([
 ]);
 
 const App = () => {
+  const [auth, setAuthInLocalStorage] = useLocalStorage<IUser>("auth");
   const [mode, setMode] = useState<PaletteMode>("light");
-  const [user, setUser] = useState<IUser>({
-    id: "",
-    name: "",
-    username: "",
-    token: "",
-  });
+  const [user, setUser] = useState<IUser>(auth);
 
-  const updateUser = (user: IUser) => setUser(user);
+  const updateUser = (user: IUser) => {
+    setUser(user);
+    setAuthInLocalStorage(user);
+  };
   const colorMode = useMemo(
     () => ({
       // The dark mode switch would invoke this method

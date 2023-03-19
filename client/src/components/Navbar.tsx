@@ -21,14 +21,14 @@ import { CustomTheme } from "../theme";
 import { logout } from "../api/auth";
 
 const pages = ["Dashboard", "Account", "Contact Us"];
-const pageURLs = ["/dashboard", "account", "contact-us"];
+const pageURLs = ["/dashboard", "/account", "/contact-us"];
 const settings = ["Logout"];
 
 function Navbar() {
   const colorMode = React.useContext(ColorModeContext);
   const { user, updateUser } = React.useContext(AuthContext);
   const theme: CustomTheme = useTheme() as CustomTheme;
-  const belowSmMatches = useMediaQuery(theme.breakpoints.down("sm"));
+  const belowMdMatches = useMediaQuery(theme.breakpoints.down("md"));
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
     null
   );
@@ -64,67 +64,38 @@ function Navbar() {
     <AppBar position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <AdbIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
+          <IconButton
+            color="inherit"
+            sx={{ display: { xs: "none", md: "flex" }, mr: 1 }}
+            component={Link}
+            to="/"
+          >
+            <AdbIcon />
+          </IconButton>
           <Typography
             variant="h6"
             noWrap
+            component={Link}
+            to={"/"}
             sx={{
               mr: 2,
               display: { xs: "none", md: "flex" },
-              // fontFamily: "monospace",
               fontWeight: 700,
-              // letterSpacing: ".1rem",
               color: "inherit",
               textDecoration: "none",
             }}
           >
-            <Link to="/" style={{ color: "inherit", textDecoration: "none" }}>
-              EXPLORE MATE
-            </Link>
+            EXPLORE MATE
           </Typography>
 
-          {/* <Box
-            sx={{
-              flexGrow: 1,
-              display: { xs: "flex", md: "none" },
-            }}
+          <IconButton
+            color="inherit"
+            sx={{ display: { xs: "flex", md: "none" }, mr: 1 }}
+            component={Link}
+            to="/"
           >
-            <IconButton
-              size="large"
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={handleOpenNavMenu}
-              color="inherit"
-            >
-              <MenuIcon />
-            </IconButton>
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorElNav}
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "left",
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "left",
-              }}
-              open={Boolean(anchorElNav)}
-              onClose={handleCloseNavMenu}
-              sx={{
-                display: { xs: "block", md: "none" },
-              }}
-            >
-              {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
-                </MenuItem>
-              ))}
-            </Menu>
-          </Box> */}
-          <AdbIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
+            <AdbIcon />
+          </IconButton>
           <Typography
             variant="h5"
             noWrap
@@ -134,9 +105,7 @@ function Navbar() {
               mr: 2,
               display: { xs: "flex", md: "none" },
               flexGrow: 1,
-              fontFamily: "monospace",
               fontWeight: 700,
-              letterSpacing: ".3rem",
               color: "inherit",
               textDecoration: "none",
             }}
@@ -151,18 +120,15 @@ function Navbar() {
             }}
           >
             {pages.map((page, key) => (
-              <Link
-                to={pageURLs[key]}
+              <Button
                 key={page}
-                style={{ textDecoration: "none" }}
+                to={pageURLs[key]}
+                component={Link}
+                onClick={handleCloseNavMenu}
+                sx={{ my: 2, color: "white", display: "block" }}
               >
-                <Button
-                  onClick={handleCloseNavMenu}
-                  sx={{ my: 2, color: "white", display: "block" }}
-                >
-                  {page}
-                </Button>
-              </Link>
+                {page}
+              </Button>
             ))}
           </Box>
 
@@ -208,15 +174,15 @@ function Navbar() {
                   </>
                 )}
               </MenuItem>
-              {belowSmMatches &&
+              {belowMdMatches &&
                 pages.map((page, key) => (
-                  <MenuItem key={page} onClick={handleCloseUserMenu}>
-                    <Link
-                      to={pageURLs[key]}
-                      style={{ textDecoration: "none", color: "inherit" }}
-                    >
-                      <Typography textAlign="center">{page}</Typography>
-                    </Link>
+                  <MenuItem
+                    key={page}
+                    onClick={handleCloseUserMenu}
+                    component={Link}
+                    to={pageURLs[key]}
+                  >
+                    <Typography textAlign="center">{page}</Typography>
                   </MenuItem>
                 ))}
               {user && user.name ? (
@@ -224,13 +190,8 @@ function Navbar() {
                   <Typography textAlign="center">Logout</Typography>
                 </MenuItem>
               ) : (
-                <MenuItem key="login">
-                  <Link
-                    to={"auth/login"}
-                    style={{ textDecoration: "none", color: "inherit" }}
-                  >
-                    <Typography textAlign={"center"}>Login</Typography>
-                  </Link>
+                <MenuItem key="login" component={Link} to={"/auth/login"}>
+                  <Typography textAlign={"center"}>Login</Typography>
                 </MenuItem>
               )}
             </Menu>

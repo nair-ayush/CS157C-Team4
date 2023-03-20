@@ -8,13 +8,13 @@
 
 ## Notes
 
-### ui
+### UI
 
-1.  Landing (A)
+1.  Landing - Ayush
     - Search button goes to create plan page which is autofilled
-2.  Sign in (A)
-3.  Sign Up (A)
-4.  Dashboard (C)
+2.  Sign in - Ayush
+3.  Sign Up - Ayush
+4.  Dashboard - Chinmayi
     <!-- - My Reviews  -->
     - Saved Plans (container)
     - Past Trips (container)
@@ -22,15 +22,15 @@
     - Create Plan (button)
       - LHS will have items for plan (CRUD)
       - RHS will have map
-5.  Explore (C)
+5.  Explore - Chinmayi
     - Tabulated windows
       - Listings
       - Events/Landmarks/Restaurants
-6.  Admin Screen (K)
+6.  Admin Screen - Khue
     - Tabulated windows for listings/events (CRUD)
-7.  Account (K)
+7.  Account - Khue
     - Profile details (CRUD)
-8.  Plan page (particular ID) (K)
+8.  Plan page (particular ID) - Khue
     - details
     - ratings/feedback
     - map
@@ -61,7 +61,7 @@ FLASK API
 
 budget category code to be determined in API
 
-### db
+### Database
 
 1. Users table:
    user_id (primary key)

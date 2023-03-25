@@ -37,11 +37,10 @@ class Activity(db.Model):
     name = db.columns.Text(required=True)
     location = db.columns.Text(required=True)
     price = db.columns.Float()
-    amenities = db.columns.List(db.columns.UserDefinedType(Amenity))
+    metadata = db.columns.List(db.columns.UserDefinedType(Amenity)) # Eg., amusement park, restaurant, italian, wifi available 
     created_on = db.columns.DateTime(default=datetime.utcnow)
     created_by = db.columns.UserDefinedType(User, required=True)
     updated_on = db.columns.DateTime()
-    updated_by = db.columns.UserDefinedType(User)
 
     @property
     def json(self):
@@ -53,8 +52,6 @@ class Activity(db.Model):
         del json_dict['created_on']
         json_dict['updatedOn'] = self.updated_on
         del json_dict['updated_on']
-        json_dict['updatedBy'] = self.updated_by.json if self.updated_by else None
-        del json_dict['updated_by']
         return json_dict
 
     def __repr__(self):

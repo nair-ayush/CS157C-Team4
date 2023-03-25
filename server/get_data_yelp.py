@@ -34,3 +34,5 @@ sf_df['updated_by'] = 'admin - chinmayi'
 
 # Very few rows had San Francisco data (especially restaurants). Hence, creating sample data
 sf_df['city'] = 'San Francisco'
+
+sf_df.to_json('eateries.json', orient = 'records')

@@ -11,8 +11,11 @@ from datetime import datetime
 
 def insert_dummy_data():
     flaskapp = create_app(config_class=Config)
+
     with flaskapp.app_context():
 
+
+    
         # Users
         u = User(name='Ayush Nair',
                  username='ayush@gmail.com', password=hash('123456'.encode()).hexdigest(), type='ADMIN')
@@ -23,6 +26,8 @@ def insert_dummy_data():
                     username='khue@gmail.com', password=hash('123456'.encode()).hexdigest(), type='ADMIN')
 
         foreignKey = FUser(id=u.id, name=u.name)
+
+
         # Listings
         l = Listing(name='Hotel De Anza',
                     location='432 14th Street', price=140, amenities=['WiFi', 'Laundry', 'Parking', 'Wheelchair-Accessible'], created_by=foreignKey)
@@ -33,6 +38,8 @@ def insert_dummy_data():
                        location='324 Almaden Blvd.', price=2000, amenities=['WiFi', 'Laundry', 'Parking', 'Wheelchair-Accessible'], created_by=foreignKey)
 
         # Activities
+
+
         Activity.create(name='Wonder Wheel',
                         location='500 Kallfried Street', price=20, created_by=foreignKey)
         a1 = Activity(name='Skeleton Gorge Hike',
@@ -44,7 +51,7 @@ def insert_dummy_data():
         a1.save()
         a2.save()
 
-        # Plans
+            # Plans 
         foreignListing = FStay(id=l.id, name=l.name)
         foreignA1 = FActivity(id=a1.id, name=a1.name)
         foreignA2 = FActivity(id=a2.id, name=a2.name)
@@ -63,5 +70,22 @@ def insert_dummy_data():
         p2.save()
 
 
+def is_empty(table_name):
+    return db.session.query(db.Model).filter_by(__table__=table_name).count() == 0
+
 if __name__ == "__main__":
-    insert_dummy_data()
+
+    if db.metadata.tables:
+            for table in db.metadata.tables.values():
+            db.session.execute(f"TRUNCATE {table.name}")
+
+            # Commit the changes to the database
+            db.session.commit()
+            print("All tables truncated")
+
+    else:
+        print("There are no tables in the database.")
+
+        
+    if is_empty('users') and is_empty('listings') and is_empty('plans') and is_empty('activities'):
+        insert_dummy_data()

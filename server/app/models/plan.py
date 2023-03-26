@@ -61,7 +61,6 @@ class Plan(db.Model):
     created_on = db.columns.DateTime(default=datetime.utcnow)
     updated_on = db.columns.DateTime(default=datetime.utcnow)
     created_by = db.columns.UserDefinedType(User, required=True)
-    updated_by = db.columns.UserDefinedType(User)
 
     @property
     def json(self):

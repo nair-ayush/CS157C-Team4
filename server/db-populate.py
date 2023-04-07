@@ -7,15 +7,14 @@ from app.models.user import User
 from config import Config
 from hashlib import sha256 as hash
 from datetime import datetime
-
+from random import randint
+import pandas as pd
 
 def insert_dummy_data():
     flaskapp = create_app(config_class=Config)
 
     with flaskapp.app_context():
 
-
-    
         # Users
         u = User(name='Ayush Nair',
                  username='ayush@gmail.com', password=hash('123456'.encode()).hexdigest(), type='ADMIN')
@@ -27,6 +26,63 @@ def insert_dummy_data():
 
         foreignKey = FUser(id=u.id, name=u.name)
 
+        try:
+            df = pd.read_json('data/eateries.json')
+
+            for i, row in df.iterrows():
+                id = row['business_id']
+                name = row['name']
+                location = [row['city'], row['latitude'], row['longitude']]
+                price = randint(40,350)
+                metadata = row['categories']
+                created_on = row['created_on']
+                created_by = row['updated_by']
+                updated_on = row['updated_on']
+
+                Activity.create(id = id, 
+                    name = name, 
+                    location = location, 
+                    price = price, 
+                    metadata = metadata, 
+                    created_on = created_on,
+                    created_by = created_by,
+                    updated_on = updated_on)
+
+            df = pd.read_json('data/landmarks.json')
+
+            for i, row in df.iterrows():
+                id = row['business_id']
+                name = row['name']
+                location = [row['city'], row['latitude'], row['longitude']]
+                price = price
+                metadata = row['categories']
+                created_on = row['created_on']
+                created_by = row['updated_by']
+                updated_on = row['updated_on']
+
+                Activity.create(id = id, 
+                    name = name, 
+                    location = location, 
+                    price = price, 
+                    metadata = metadata, 
+                    created_on = created_on,
+                    created_by = created_by,
+                    updated_on = updated_on)
+
+        except:
+            # Activities
+
+            Activity.create(name='Wonder Wheel',
+                            location='500 Kallfried Street', price=20, created_by=foreignKey)
+            a1 = Activity(name='Skeleton Gorge Hike',
+                          location='30 Almaden Blvd.', created_by=foreignKey)
+            a2 = Activity(name='Caps Bar and Lounge',
+                          location='4324 1th Street', created_by=foreignKey)
+            a2.amenities = [Amenity(type='Cuisine', value='Continental, Italian'), Amenity(
+                type='Vibe', value='Party')]
+            a1.save()
+            a2.save()
+
 
         # Listings
         l = Listing(name='Hotel De Anza',
@@ -37,19 +93,7 @@ def insert_dummy_data():
         Listing.create(name='Sheraton San Francisco',
                        location='324 Almaden Blvd.', price=2000, amenities=['WiFi', 'Laundry', 'Parking', 'Wheelchair-Accessible'], created_by=foreignKey)
 
-        # Activities
-
-
-        Activity.create(name='Wonder Wheel',
-                        location='500 Kallfried Street', price=20, created_by=foreignKey)
-        a1 = Activity(name='Skeleton Gorge Hike',
-                      location='30 Almaden Blvd.', created_by=foreignKey)
-        a2 = Activity(name='Caps Bar and Lounge',
-                      location='4324 1th Street', created_by=foreignKey)
-        a2.amenities = [Amenity(type='Cuisine', value='Continental, Italian'), Amenity(
-            type='Vibe', value='Party')]
-        a1.save()
-        a2.save()
+        
 
             # Plans 
         foreignListing = FStay(id=l.id, name=l.name)
@@ -82,6 +126,7 @@ if __name__ == "__main__":
             # Commit the changes to the database
             db.session.commit()
             print("All tables truncated")
+
 
     else:
         print("There are no tables in the database.")

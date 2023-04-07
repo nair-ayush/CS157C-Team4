@@ -34,7 +34,7 @@ def insert_dummy_data():
                 name = row['name']
                 location = [row['city'], row['latitude'], row['longitude']]
                 price = randint(40,350)
-                metadata = row['categories']
+                metadata = "Restaurant, "+row['categories']
                 created_on = row['created_on']
                 created_by = row['updated_by']
                 updated_on = row['updated_on']

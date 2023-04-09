@@ -7,6 +7,7 @@
 
 import json
 import pandas as pd
+from datetime import datetime
 
 # Load the JSON data into a dictionary
 with open('yelp_academic_dataset_business.json', 'r') as r:

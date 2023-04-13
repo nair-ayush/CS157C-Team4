@@ -3,6 +3,6 @@
 Faculty: Prof. Mike Wu
 ## Team Members
 
-- Ayush Nair
-- Khue Do Anh Nguyen
-- Chinmayi Lokeshwar Hegde
+1. Ayush Nair
+2. Khue Do Anh Nguyen
+3. Chinmayi Lokeshwar Hegde

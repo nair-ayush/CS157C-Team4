@@ -5,6 +5,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Auth from "./pages/Auth";
 import ContactUs from "./pages/ContactUs";
 import ErrorPage from "./pages/ErrorPage";
+import Dashboard from "./pages/Dashboard";
 import Home from "./pages/Home";
 import theme from "./theme";
 
@@ -15,6 +16,7 @@ const router = createBrowserRouter([
   { path: "/contact-us", element: <ContactUs /> },
   { path: "/auth/login", element: <Auth type="login" /> },
   { path: "/auth/signup", element: <Auth type="signup" /> },
+  { path: "/dashboard", element: <Dashboard />}
 ]);
 
 const App = () => {

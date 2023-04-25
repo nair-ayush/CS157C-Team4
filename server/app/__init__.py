@@ -30,6 +30,8 @@ def create_app(config_class=Config):
         app.register_blueprint(activities_bp, url_prefix='/api/activities')
         from app.plans import bp as plans_bp
         app.register_blueprint(plans_bp, url_prefix='/api/plans')
+        from app.reviews import bp as review_bp
+        app.register_blueprint(review_bp, url_prefix='/api/reviews')
 
         @app.route('/api')
         def test_page():

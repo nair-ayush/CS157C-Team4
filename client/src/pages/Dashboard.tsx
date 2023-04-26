@@ -79,7 +79,7 @@ function Dashboard() {
     <Navbar></Navbar>
     <div className='container'>
     <h1> Your plans</h1>
-    <Grid container spacing={4}>
+    <Grid container spacing={6}>
       {plans.map((plan) => (
         <Grid key={plan.plan_id} item xs={12} sm={6} md={4}>
           <Box>

@@ -20,8 +20,8 @@ import Brightness7Icon from "@mui/icons-material/Brightness7";
 import { useMediaQuery } from "@mui/material";
 import { CustomTheme } from "../theme";
 
-const pages = ["Dashboard", "Account", "Contact Us"];
-const pageURLs = ["/dashboard", "account", "contact-us"];
+const pages = ["Explore", "Dashboard", "Account", "Contact Us"];
+const pageURLs = ["/explore", "/dashboard", "account", "contact-us"];
 const settings = ["Logout"];
 
 function Navbar() {

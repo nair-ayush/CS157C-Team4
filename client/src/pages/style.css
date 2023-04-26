@@ -1,12 +1,12 @@
 .container {
-    padding: 20px;
+    padding: 35px;
   }
   
 .card {
     border-radius: 20px;
     background: #f5f5f5;
     position: relative;
-    padding: 1.8rem;
+    padding: 10px;
     border: 2px solid #c3c6ce;
     transition: 0.5s ease-out;
     overflow: visible;
@@ -14,7 +14,7 @@
 
 .card:hover {
     border-color: #805feb;
-    box-shadow: 0 4px 18px 0 rgba(0, 0, 0, 0.25);
+    box-shadow: 1px 8px 18px 1px rgba(0, 0, 0, 0.45);
 }
 
 .button {
@@ -33,6 +33,7 @@
 
 .button:hover::before {
     transform: scaleX(1);
+    box-shadow: 1px 8px 10px 1px rgba(0, 0, 0, 0.45);
 }
 
 .button-content {
@@ -58,3 +59,21 @@
     transition: all 0.475s;
 }
 
+.table-container {
+    margin: 10px;
+    padding: 15px;
+    border-radius: 10px;
+}
+
+.table-container:hover {
+    background-color: #ffffff;
+    box-shadow: 3px 8px 18px 3px rgba(103, 103, 103, 0.25);
+}
+
+thead tr th {
+    background-color: #ebeaea;
+    padding: 8px;
+}
+td {
+    padding: 8px;
+}

@@ -1,52 +1,145 @@
-import React, { useState, useMemo, useCallback, useContext } from "react";
-import Image from "next-images";
-import { useDropzone } from "react-dropzone";
+import React, { useState } from 'react';
+import { useTheme } from '@emotion/react';
+import { Adb } from '@mui/icons-material';
+import {
+  Avatar,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Container,
+  Grid,
+  Typography,
+  useMediaQuery,
+} from '@mui/material';
+import { Link } from 'react-router-dom';
+import Navbar from "../components/Navbar";
 
-//INTERNAL IMPORT
-import Style from "../styles/account.css";
-import images from "../pics/user1.jpeg";
-import From from "../AccountPage/Form";
+function Account() {
+  const [isEditing, setIsEditing] = useState(false);
+  const [profilePictureUrl, setProfilePictureUrl] = useState('https://example.com/profile-picture.jpg');
+  const [username, setUsername] = useState('Khue Nguyen');
+  const [bio, setBio] = useState('Hello, I am Khue, an enthusiastic traveler! I am always on a mission to explore the next great adventure, whether it is hiking through remote wilderness or immersing myself in new cultures.');
+  const [email, setEmail] = useState('khue.nguyen@gmail.com');
+  const [password, setPassword] = useState('********');
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
-const Account = () => {
-  const [fileUrl, setFileUrl] = useState(null);
+  const handleEditClick = () => {
+    setIsEditing(true);
+  };
 
-  const onDrop = useCallback(async (acceptedFile) => {
-    setFileUrl(acceptedFile[0]);
-  }, []);
-
-  const { getRootProps, getInputProps } = useDropzone({
-    onDrop,
-    accept: "image/*",
-    maxSize: 5000000,
-  });
+  const handleSaveClick = () => {
+    setIsEditing(false);
+    // Save changes to server or update state as needed
+  };
 
   return (
-    <div className={Style.account}>
-      <div className={Style.account_info}>
-        <h1>Profile settings</h1>
-        <p>
-          Edit Your Profile
-        </p>
-      </div>
-
-      <div className={Style.account_box}>
-        <div className={Style.account_box_img} {...getRootProps()}>
-          <input {...getInputProps()} />
-          <Image
-            src={images.profilepic}
-            alt="account upload"
-            width={150}
-            height={150}
-            className={Style.account_box_img_img}
-          />
-          <p className={Style.account_box_img_para}>Change Image</p>
-        </div>
-        <div className={Style.account_box_from}>
-          <From />
-        </div>
-      </div>
-    </div>
-  );
-};
+    <Box sx={{ bgcolor: 'background.default', minHeight: '100vh' }}>
+      <Navbar />
+      <Container maxWidth="md" sx={{ py: 6 }}>
+        <Card sx={{ display: 'flex', flexDirection: isSmallScreen ? 'column' : 'row' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', p: 4 }}>
+            <Avatar src={profilePictureUrl} sx={{ width: isSmallScreen ? 128 : 200, height: isSmallScreen ? 128 : 200 }} />
+          </Box>
+          <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', p: 4 }}>
+            {isEditing ? (
+              <div>
+                <Typography variant="h5" gutterBottom>
+                  Edit Profile
+                </Typography>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                  <Typography variant="subtitle1" gutterBottom>
+                    Profile Picture URL:
+                  </Typography>
+                  <input id="profile-picture-url" type="text" value={profilePictureUrl} onChange={(e) => setProfilePictureUrl(e.target.value)} />
+                  <Typography variant="subtitle1" gutterBottom>
+                    Username:
+                  </Typography>
+                  <input id="username" type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
+                  <Typography variant="subtitle1" gutterBottom>
+                    Bio:
+                  </Typography>
+                  <textarea id="bio" value={bio} onChange={(e) => setBio(e.target.value)} />
+                  <Typography variant="subtitle1" gutterBottom>
+                    Email:
+                  </Typography>
+                  <input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                  <Typography variant="subtitle1" gutterBottom>
+                    Password:
+                  </Typography>
+                  <input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+                  <Button variant="contained" onClick={handleSaveClick}>
+                    Save
+                  </Button>
+                </Box>
+              </div>
+            ) : (
+              <div>
+                <Typography variant="h5"
+                              gutterBottom>
+                              {username}
+                            </Typography>
+                            <Typography variant="body1" gutterBottom>
+                              {bio}
+                            </Typography>
+                            <Typography variant="subtitle1" gutterBottom>
+                              Email: {email}
+                            </Typography>
+                            <Typography variant="subtitle1" gutterBottom>
+                              Password: {password.replace(/./g, '*')}
+                            </Typography>
+                            <Button variant="contained" onClick={handleEditClick}>
+                              Edit
+                            </Button>
+                          </div>
+                        )}
+                      </Box>
+                    </Card>
+                    <Box sx={{ mt: 4 }}>
+                      <Typography variant="h6" gutterBottom>
+                        PLANS
+                      </Typography>
+                      <Grid container spacing={3}>
+                        <Grid item xs={12} sm={6} md={4}>
+                          <Card>
+                            <CardContent>
+                              <Adb fontSize="large" />
+                              <Typography variant="h6" component="h3" gutterBottom>
+                                My Created Plans
+                              </Typography>
+                              <Typography variant="body1" gutterBottom>
+                                Check out my most loved places!
+                              </Typography>
+                              <Link to="/listings/1">
+                                <Button variant="contained">View Details</Button>
+                              </Link>
+                            </CardContent>
+                          </Card>
+                        </Grid>
+                        <Grid item xs={12} sm={6} md={4}>
+                          <Card>
+                            <CardContent>
+                              <Adb fontSize="large" />
+                              <Typography variant="h6" component="h3" gutterBottom>
+                                My Saved Plans
+                              </Typography>
+                              <Typography variant="body1" gutterBottom>
+                                I will explore these places in the next trip!
+                              </Typography>
+                              <Link to="/listings/2">
+                                <Button variant="contained">View Details</Button>
+                              </Link>
+                            </CardContent>
+                          </Card>
+                        </Grid>
+                      </Grid>
+                    </Box>
+                  </Container>
+                </Box>
+);
+}
 
 export default Account;
+
+                

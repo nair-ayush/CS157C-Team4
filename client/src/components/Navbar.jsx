@@ -19,8 +19,8 @@ import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
 import { useMediaQuery } from "@mui/material";
 
-const pages = ["Dashboard", "Account", "Contact Us"];
-const pageURLs = ["/dashboard", "account", "contact-us"];
+const pages = ["Dashboard", "Account", "Plans", "Admin", "Contact Us"];
+const pageURLs = ["/dashboard", "account", "plans", "admin", "contact-us"];
 const settings = ["Logout"];
 
 function Navbar() {

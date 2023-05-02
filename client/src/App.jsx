@@ -7,7 +7,9 @@ import ContactUs from "./pages/ContactUs";
 import ErrorPage from "./pages/ErrorPage";
 import Home from "./pages/Home";
 import theme from "./theme";
-//import Account from "./pages/Account";
+import Account from "./pages/Account";
+import Admin from "./pages/Admin";
+import Plans from "./pages/Plans";
 
 export const ColorModeContext = createContext({ toggleColorMode: () => {} });
 
@@ -16,7 +18,9 @@ const router = createBrowserRouter([
   { path: "/contact-us", element: <ContactUs /> },
   { path: "/auth/login", element: <Auth type="login" /> },
   { path: "/auth/signup", element: <Auth type="signup" /> },
-  //{ path: "/account", element: <Account /> },
+  { path: "/account", element: <Account /> },
+  { path: "/admin", element: <Admin /> },
+  { path: "/plans", element: <Plans /> },
 ]);
 
 const App = () => {

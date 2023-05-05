@@ -7,6 +7,7 @@ import ContactUs from "./pages/ContactUs";
 import ErrorPage from "./pages/ErrorPage";
 import Home from "./pages/Home";
 import theme from "./theme";
+import { Dashboard, Explore } from "@mui/icons-material";
 
 interface IAuthContext {
   user: IUser | null;
@@ -31,18 +32,12 @@ const router = createBrowserRouter([
   { path: "/contact-us", element: <ContactUs /> },
   { path: "/auth/login", element: <Auth type="login" /> },
   { path: "/auth/signup", element: <Auth type="signup" /> },
+  { path: "/dashboard", element: <Dashboard /> },
+  { path: "/explore", element: <Explore /> },
 ]);
 
 const App = () => {
   const [mode, setMode] = useState<PaletteMode>("light");
-  const [user, setUser] = useState<IUser>({
-    id: "",
-    name: "",
-    username: "",
-    token: "",
-  });
-
-  const updateUser = (user: IUser) => setUser(user);
   const colorMode = useMemo(
     () => ({
       // The dark mode switch would invoke this method

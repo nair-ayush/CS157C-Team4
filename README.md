@@ -1,5 +1,7 @@
 # CS157C-Team4
 
+Faculty: Prof. Mike Wu
+
 ## Team Members
 
 - Ayush Nair
@@ -8,13 +10,13 @@
 
 ## Notes
 
-### UI
+### ui
 
-1.  Landing - Ayush
+1.  Landing (A)
     - Search button goes to create plan page which is autofilled
-2.  Sign in - Ayush
-3.  Sign Up - Ayush
-4.  Dashboard - Chinmayi
+2.  Sign in (A)
+3.  Sign Up (A)
+4.  Dashboard (C)
     <!-- - My Reviews  -->
     - Saved Plans (container)
     - Past Trips (container)
@@ -22,15 +24,15 @@
     - Create Plan (button)
       - LHS will have items for plan (CRUD)
       - RHS will have map
-5.  Explore - Chinmayi
+5.  Explore (C)
     - Tabulated windows
       - Listings
       - Events/Landmarks/Restaurants
-6.  Admin Screen - Khue
+6.  Admin Screen (K)
     - Tabulated windows for listings/events (CRUD)
-7.  Account - Khue
+7.  Account (K)
     - Profile details (CRUD)
-8.  Plan page (particular ID) - Khue
+8.  Plan page (particular ID) (K)
     - details
     - ratings/feedback
     - map
@@ -61,7 +63,7 @@ FLASK API
 
 budget category code to be determined in API
 
-### Database
+### db
 
 1. Users table:
    user_id (primary key)

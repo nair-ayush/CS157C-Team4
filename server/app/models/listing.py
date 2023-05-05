@@ -26,11 +26,12 @@ class Listing(db.Model):
     name = db.columns.Text(required=True)
     location = db.columns.Text(required=True)
     price = db.columns.Float(required=True)
+    host_id = db.columns.Text(required=True)
+    host_name = db.columns.Text(required=True)
     amenities = db.columns.List(db.columns.Text)
     created_on = db.columns.DateTime(default=datetime.utcnow)
     created_by = db.columns.UserDefinedType(User, required=True)
     updated_on = db.columns.DateTime()
-    updated_by = db.columns.UserDefinedType(User)
 
     @property
     def json(self):

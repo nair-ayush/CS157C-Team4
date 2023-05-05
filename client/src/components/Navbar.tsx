@@ -4,6 +4,7 @@ import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import Menu from "@mui/material/Menu";
+import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
@@ -20,8 +21,8 @@ import { useMediaQuery } from "@mui/material";
 import { CustomTheme } from "../theme";
 import { logout } from "../api/auth";
 
-const pages = ["Dashboard", "Account", "Contact Us"];
-const pageURLs = ["/dashboard", "account", "contact-us"];
+const pages = ["Explore", "Dashboard", "Account", "Contact Us"];
+const pageURLs = ["/explore", "/dashboard", "account", "contact-us"];
 const settings = ["Logout"];
 
 function Navbar() {

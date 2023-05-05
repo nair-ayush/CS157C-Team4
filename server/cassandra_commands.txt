@@ -1,0 +1,47 @@
+CREATE TABLE users (
+  user_id uuid PRIMARY KEY,
+  name text,
+  email text,
+  password text
+);
+
+CREATE TABLE plans (
+  plan_id uuid PRIMARY KEY,
+  created_by uuid,
+  saved_by set<uuid>,
+  destination text,
+  start_date timestamp,
+  end_date timestamp
+);
+
+CREATE TABLE places (
+  place_id uuid PRIMARY KEY,
+  name text,
+  price decimal,
+  type text,
+  metadata map<text,text>,
+  latitude float,
+  longitude float
+);
+
+CREATE TABLE accommodations (
+  accommodation_id uuid PRIMARY KEY,
+  name text,
+  location text,
+  price decimal,
+  amenities map<text,text>
+);
+
+CREATE TABLE reviews (
+  review_id uuid PRIMARY KEY,
+  user_id uuid,
+  plan_id uuid,
+  rating int,
+  comment text
+);
+
+# SELECT * FROM plans WHERE saved_by CONTAINS 123e4567-e89b-12d3-a456-426655440000;
+# SELECT * FROM users WHERE user_id = 123e4567-e89b-12d3-a456-426655440000;
+# SELECT * FROM accommodations WHERE amenities CONTAINS 'wifi';
+# SELECT * FROM places WHERE type = 'restaurant';
+# SELECT * FROM reviews WHERE plan_id = 123e4567-e89b-12d3-a456-426655440000;

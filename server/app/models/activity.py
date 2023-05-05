@@ -37,7 +37,7 @@ class Activity(db.Model):
     name = db.columns.Text(required=True)
     location = db.columns.Text(required=True)
     price = db.columns.Float()
-    metadata = db.columns.List(db.columns.UserDefinedType(Amenity)) # Eg., amusement park, restaurant, italian, wifi available 
+    metadata = db.columns.List(db.columns.Text()) # Eg., amusement park, restaurant, italian, wifi available 
     created_on = db.columns.DateTime(default=datetime.utcnow)
     created_by = db.columns.UserDefinedType(User, required=True)
     updated_on = db.columns.DateTime()

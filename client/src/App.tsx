@@ -1,31 +1,15 @@
 import { ThemeProvider } from "@emotion/react";
-import { CssBaseline, PaletteMode } from "@mui/material";
-import { useState, createContext, useMemo } from "react";
+import { CssBaseline } from "@mui/material";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Auth from "./pages/Auth";
 import ContactUs from "./pages/ContactUs";
 import ErrorPage from "./pages/ErrorPage";
 import Home from "./pages/Home";
-import theme from "./theme";
-import { Dashboard, Explore } from "@mui/icons-material";
-
-interface IAuthContext {
-  user: IUser | null;
-  updateUser: (user: IUser) => void;
-}
-
-export const ColorModeContext = createContext({ toggleColorMode: () => {} });
-export const AuthContext = createContext<IAuthContext>({
-  user: null,
-  updateUser: (user: IUser) => {},
-});
-
-export interface IUser {
-  id: string;
-  name: string;
-  username: string;
-  token: string;
-}
+import Dashboard from "./pages/Dashboard";
+import Explore from "./pages/Explore";
+import { themeAtom } from "./lib/store";
+import { useAtom } from "jotai";
+import { LoadingSpinner } from "./components";
 
 const router = createBrowserRouter([
   { path: "/", element: <Home />, errorElement: <ErrorPage /> },
@@ -37,30 +21,14 @@ const router = createBrowserRouter([
 ]);
 
 const App = () => {
-  const [mode, setMode] = useState<PaletteMode>("light");
-  const colorMode = useMemo(
-    () => ({
-      // The dark mode switch would invoke this method
-      toggleColorMode: () => {
-        setMode((prevMode: PaletteMode) =>
-          prevMode === "light" ? "dark" : "light"
-        );
-      },
-    }),
-    []
-  );
-  const appTheme = useMemo(() => theme(mode), [mode]);
-
+  const [theme] = useAtom(themeAtom);
   return (
     <>
-      <AuthContext.Provider value={{ user, updateUser }}>
-        <ColorModeContext.Provider value={colorMode}>
-          <ThemeProvider theme={appTheme}>
-            <CssBaseline />
-            <RouterProvider router={router}></RouterProvider>
-          </ThemeProvider>
-        </ColorModeContext.Provider>
-      </AuthContext.Provider>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <RouterProvider router={router}></RouterProvider>
+        <LoadingSpinner />
+      </ThemeProvider>
     </>
   );
 };

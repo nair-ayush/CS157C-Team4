@@ -10,7 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 import { Link } from "react-router-dom";
-import { CustomTheme } from "../theme";
+import { CustomTheme } from "../lib/theme";
 
 interface DisplayCardProps {
   label: string;

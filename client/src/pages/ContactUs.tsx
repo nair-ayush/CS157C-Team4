@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import theme, { CustomTheme } from "../theme";
+import theme, { CustomTheme } from "../lib/theme";
 
 const ContactUs = () => {
   const theme: CustomTheme = useTheme() as CustomTheme;

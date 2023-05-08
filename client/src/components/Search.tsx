@@ -17,9 +17,11 @@ import {
   MobileDatePicker,
 } from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { CustomTheme } from "../lib/theme";
+import moment, { Moment } from "moment";
+import { TSearch } from "../lib/types";
 
 const eventFilters = [
   "Theme Parks",
@@ -31,28 +33,38 @@ const eventFilters = [
   "Bars",
 ];
 
-interface SearchProps {
-  location?: string;
-  numGuests?: number;
-  checkInDate?: string | null;
-  checkOutDate?: string | null;
-  budget?: number;
-  filters?: string[];
+interface SearchProps extends TSearch {
+  onSearchSubmitCallback: (data: any) => void;
 }
+
 export default function Search(props: SearchProps) {
   const belowMdMatches = useMediaQuery((theme: CustomTheme) =>
     theme.breakpoints.down("md")
   );
-  const [filters, setFilters] = useState(props.filters || []);
-  const { handleSubmit, control, setValue } = useForm<SearchProps>({
-    defaultValues: {
-      ...props,
-      checkInDate: props.checkInDate || null,
-      checkOutDate: props.checkOutDate || null,
-    },
-  });
+  const [filters, setFilters] = useState<string[]>([]);
+  const { handleSubmit, control, setValue } = useForm<TSearch>({});
 
-  const onSubmit: SubmitHandler<SearchProps> = (data) => console.log(data);
+  useEffect(() => {
+    setValue(
+      "checkInDate",
+      props.checkInDate ? moment(props.checkInDate, "YYYY-MM-DD") : null
+    );
+    setValue(
+      "checkOutDate",
+      props.checkOutDate ? moment(props.checkOutDate, "YYYY-MM-DD") : null
+    );
+    setValue("budget", `${props.budget}`);
+    setValue("location", props.location);
+    setValue("numGuests", props.numGuests);
+    setFilters(props.filters || []);
+  }, [props, setValue]);
+
+  const onSubmit: SubmitHandler<TSearch> = (data) => {
+    data.checkInDate = (data.checkInDate as Moment)?.format("YYYY-MM-DD");
+    data.checkOutDate = (data.checkOutDate as Moment)?.format("YYYY-MM-DD");
+    data = { ...data, filters };
+    props.onSearchSubmitCallback(data);
+  };
 
   const DatePicker = useMemo(
     () => (belowMdMatches ? MobileDatePicker : DesktopDatePicker),
@@ -304,11 +316,17 @@ export default function Search(props: SearchProps) {
                   variant="outlined"
                   onClick={() => {
                     if (filters.includes(eventType)) {
-                      setFilters((events) =>
-                        events.filter((e) => e !== eventType)
-                      );
-                    } else setFilters([...filters, eventType]);
-                    setValue("filters", filters);
+                      setFilters((prev) => {
+                        prev = prev.filter((e) => e !== eventType);
+                        setValue("filters", prev);
+                        return prev;
+                      });
+                    } else
+                      setFilters((prev) => {
+                        prev = [...prev, eventType];
+                        setValue("filters", prev);
+                        return prev;
+                      });
                   }}
                 />
               );

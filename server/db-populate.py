@@ -27,8 +27,8 @@ def insert_dummy_data():
         foreignKey = FUser(id=u.id, name=u.name)
 
         try:
+            ###EATERIES
             df = pd.read_json('data/eateries.json')
-
             for i, row in df.iterrows():
                 id = row['business_id']
                 name = row['name']
@@ -48,8 +48,8 @@ def insert_dummy_data():
                     created_by = created_by,
                     updated_on = updated_on)
 
+            ###LANDMARKS
             df = pd.read_json('data/landmarks.json')
-
             for i, row in df.iterrows():
                 id = row['business_id']
                 name = row['name']
@@ -69,6 +69,25 @@ def insert_dummy_data():
                     created_by = created_by,
                     updated_on = updated_on)
 
+            ###AIRBNB
+            df = pd.read_json('data/airbnb.json')
+            for i, row in df.iterrows():
+                id = row['id']
+                name = row['name']
+                location = [row['city'], row['latitude'], row['longitude']]
+                price = row['price']
+                created_on = row['created_on']
+                created_by = row['updated_by']
+                updated_on = row['updated_on']
+
+                Listing.create(id = id, 
+                    name = name, 
+                    location = location, 
+                    price = price,
+                    created_on = created_on,
+                    created_by = created_by,
+                    updated_on = updated_on)
+                
         except:
             # Activities
 
@@ -95,7 +114,7 @@ def insert_dummy_data():
 
         
 
-            # Plans 
+        # Plans 
         foreignListing = FStay(id=l.id, name=l.name)
         foreignA1 = FActivity(id=a1.id, name=a1.name)
         foreignA2 = FActivity(id=a2.id, name=a2.name)
@@ -120,7 +139,7 @@ def is_empty(table_name):
 if __name__ == "__main__":
 
     if db.metadata.tables:
-            for table in db.metadata.tables.values():
+        for table in db.metadata.tables.values():
             db.session.execute(f"TRUNCATE {table.name}")
 
             # Commit the changes to the database

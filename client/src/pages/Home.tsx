@@ -19,12 +19,14 @@ import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { Moment } from "moment";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Navbar from "../components/Navbar";
 import { Place, SearchOutlined, TrendingUp } from "@mui/icons-material";
 import { MobileDatePicker } from "@mui/x-date-pickers";
 import DisplayCard from "../components/DisplayCard";
-import { CustomTheme } from "../theme";
+import { CustomTheme } from "../lib/theme";
+import { TLocation, TPlan } from "../lib/types";
+import { getTrendingLocations } from "../api/locations";
 
 const Home = () => {
   const theme: CustomTheme = useTheme() as CustomTheme;
@@ -34,6 +36,8 @@ const Home = () => {
   const [checkOutDate, setCheckOutDate] = useState<Moment | null>(null);
   const [numGuests, setNumGuests] = useState<number>(1);
   const [events, setEvents] = useState<string[]>([]);
+  const [trendingLocations, setTrendingLocations] = useState<TLocation[]>([]);
+  const [trendingPlans, setTrendingPlans] = useState<TPlan[]>([]);
   const belowMdMatches = useMediaQuery(theme.breakpoints.down("md"));
   const belowSmMatches = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -46,107 +50,33 @@ const Home = () => {
     "Arcades",
     "Bars",
   ];
-  const trendingLocations = [
-    {
-      label: "San Francisco",
-      navigateTo: "/",
-      imageURL:
-        "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2144&q=80",
-    },
-    {
-      label: "Los Angeles",
-      navigateTo: "/",
-      imageURL:
-        "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80",
-    },
-    {
-      label: "New York",
-      navigateTo: "/",
-      imageURL:
-        "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1920&q=80",
-    },
-    {
-      label: "Austin",
-      navigateTo: "/",
-      imageURL:
-        "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80",
-    },
-    {
-      label: "Napa Valley",
-      navigateTo: "/",
-      imageURL:
-        "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2144&q=80",
-    },
-    {
-      label: "Las Vegas",
-      navigateTo: "/",
-      imageURL:
-        "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1920&q=80",
-    },
-  ];
-  const trendingPlans = [
-    {
-      label: "San Francisco",
-      navigateTo: "/",
-      budget: 1,
-      numDays: 1,
-      imageURL:
-        "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2144&q=80",
-    },
-    {
-      label: "Los Angeles",
-      navigateTo: "/",
-      budget: 3,
-      numDays: 3,
-      imageURL:
-        "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80",
-    },
-    {
-      label: "New York",
-      navigateTo: "/",
-      budget: 1,
-      numDays: 5,
-      imageURL:
-        "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1920&q=80",
-    },
-    {
-      label: "Austin",
-      navigateTo: "/",
-      budget: 2,
-      numDays: 3,
-      imageURL:
-        "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80",
-    },
-    {
-      label: "Napa Valley",
-      navigateTo: "/",
-      budget: 2,
-      numDays: 2,
-      imageURL:
-        "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2144&q=80",
-    },
-    {
-      label: "Las Vegas",
-      navigateTo: "/",
-      budget: 1,
-      numDays: 3,
-      imageURL:
-        "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1920&q=80",
-    },
-  ];
+
+  useEffect(() => {
+    const fetchData = async () => {
+      // fetch calls to database for trending locations and plans and set to state
+      // const trendingLocationsResponse = await getTrendingLocations();
+      // if (trendingLocationsResponse)
+      // setTrendingLocations(trendingLocationsResponse);
+    };
+    fetchData();
+  }, []);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     // handle login logic here
   };
 
-  const DatePicker = belowSmMatches ? MobileDatePicker : DesktopDatePicker;
+  const DatePicker = useMemo(
+    () => (belowSmMatches ? MobileDatePicker : DesktopDatePicker),
+    [belowSmMatches]
+  );
 
   const handleBudget = (_: React.MouseEvent<HTMLElement>, newBudget: string) =>
     setBudgetLevel(newBudget);
+
   return (
     <>
-      <Navbar></Navbar>
+      <Navbar />
       <Box
         sx={{
           backgroundColor:

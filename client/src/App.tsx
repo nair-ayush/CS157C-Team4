@@ -1,6 +1,5 @@
 import { ThemeProvider } from "@emotion/react";
-import { CssBaseline, PaletteMode } from "@mui/material";
-import { useState, createContext, useMemo } from "react";
+import { CssBaseline } from "@mui/material";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Auth from "./pages/Auth";
 import ContactUs from "./pages/ContactUs";
@@ -10,10 +9,12 @@ import Account from "./pages/Account";
 import Explore from "./pages/Explore";
 import Plans from "./pages/Plans";
 import Home from "./pages/Home";
-import theme from "./theme";
 
-
-export const ColorModeContext = createContext({ toggleColorMode: () => {} });
+import Dashboard from "./pages/Dashboard";
+import Explore from "./pages/Explore";
+import { themeAtom } from "./lib/store";
+import { useAtom } from "jotai";
+import { LoadingSpinner } from "./components";
 
 const router = createBrowserRouter([
   { path: "/", element: <Home />, errorElement: <ErrorPage /> },
@@ -27,28 +28,14 @@ const router = createBrowserRouter([
 ]);
 
 const App = () => {
-  const [mode, setMode] = useState<PaletteMode>("light");
-  const colorMode = useMemo(
-    () => ({
-      // The dark mode switch would invoke this method
-      toggleColorMode: () => {
-        setMode((prevMode: PaletteMode) =>
-          prevMode === "light" ? "dark" : "light"
-        );
-      },
-    }),
-    []
-  );
-  const appTheme = useMemo(() => theme(mode), [mode]);
-
+  const [theme] = useAtom(themeAtom);
   return (
     <>
-      <ColorModeContext.Provider value={colorMode}>
-        <ThemeProvider theme={appTheme}>
-          <CssBaseline />
-          <RouterProvider router={router}></RouterProvider>
-        </ThemeProvider>
-      </ColorModeContext.Provider>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <RouterProvider router={router}></RouterProvider>
+        <LoadingSpinner />
+      </ThemeProvider>
     </>
   );
 };

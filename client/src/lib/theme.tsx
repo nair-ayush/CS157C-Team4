@@ -2,6 +2,15 @@ import { red } from "@mui/material/colors";
 import { createTheme, PaletteMode, Theme } from "@mui/material";
 
 const getDesignTokens = (mode: PaletteMode) => ({
+  breakpoints: {
+    values: {
+      xs: 0,
+      sm: 600,
+      md: 900,
+      lg: 1200,
+      xl: 1536,
+    },
+  },
   palette: {
     mode,
     ...(mode === "light"

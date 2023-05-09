@@ -60,6 +60,7 @@ class Plan(db.Model):
     activities = db.columns.List(db.columns.UserDefinedType(Activity))
     created_on = db.columns.DateTime(default=datetime.utcnow)
     updated_on = db.columns.DateTime(default=datetime.utcnow)
+    created_by = db.columns.UserDefinedType(User, required=True)
 
     @property
     def json(self):

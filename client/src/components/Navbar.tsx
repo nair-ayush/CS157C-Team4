@@ -22,6 +22,7 @@ import { CustomTheme } from "../lib/theme";
 const pages = [
   ["Explore", "/explore"],
   ["Dashboard", "/dashboard"],
+  ["Pages", "/plans"],
   ["Contact Us", "/contact-us"],
 ];
 const settings = ["Account", "Logout"];

@@ -53,13 +53,14 @@ export default function Search(props: SearchProps) {
       "checkOutDate",
       props.checkOutDate ? moment(props.checkOutDate, "YYYY-MM-DD") : null
     );
-    setValue("budget", `${props.budget}`);
+    setValue("budget", props.budget);
     setValue("location", props.location);
     setValue("numGuests", props.numGuests);
     setFilters(props.filters || []);
   }, [props, setValue]);
 
   const onSubmit: SubmitHandler<TSearch> = (data) => {
+    console.log(data);
     data.checkInDate = (data.checkInDate as Moment)?.format("YYYY-MM-DD");
     data.checkOutDate = (data.checkOutDate as Moment)?.format("YYYY-MM-DD");
     data = { ...data, filters };

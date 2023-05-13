@@ -1,6 +1,6 @@
 import { useAtom } from "jotai";
 import { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import "./style.css";
 import Navbar from "../components/Navbar";
 import { Search, Table } from "../components";
@@ -11,6 +11,7 @@ import { getSearch } from "../api/explore";
 
 export default function Explore() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [loading, setLoading] = useAtom(loadingAtom);
   const [search, setSearch] = useState<TSearch>();
   const [listings, setListings] = useState<any[]>([]);
@@ -20,14 +21,15 @@ export default function Explore() {
   useEffect(() => {
     setLoading(true);
     const params = new URLSearchParams(location.search);
-    setSearch({
+    const search = {
       location: params.get("location") || "",
       checkInDate: params.get("checkInDate"),
       checkOutDate: params.get("checkOutDate"),
       numGuests: +params.get("numGuests")! || 0,
-      budget: params.get("budget")!,
+      budget: params.get("budget"),
       filters: params.get("filters")?.split(","),
-    });
+    };
+    setSearch(search);
     const fetchData = async () => {
       const searchResponse = await getSearch(search!);
       if (searchResponse) {
@@ -54,7 +56,17 @@ export default function Explore() {
     fetchData();
   }, [location.search]);
 
-  const handleSearch = (data: any) => console.log(data);
+  const handleSearch = (data: TSearch) => {
+    console.log(data);
+    const params = new URLSearchParams();
+    params.set("location", data.location || "");
+    params.set("checkInDate", data.checkInDate?.toString() || "");
+    params.set("checkOutDate", data.checkOutDate?.toString() || "");
+    params.set("numGuests", `${data.numGuests}`);
+    params.set("budget", `${data.budget}`);
+    params.set("filters", data.filters?.join(",") || "");
+    navigate(`/explore?${params.toString()}`);
+  };
   const handleRestaurantClick = (id: string) => console.log(id);
   const handleListingClick = (id: string) => console.log(id);
   const handleEventClick = (id: string) => console.log(id);
@@ -79,6 +91,7 @@ export default function Explore() {
                 {restaurants.length ? (
                   <Table
                     action={handleRestaurantClick}
+                    actionLabel="Add to Plan"
                     data={restaurants}
                     headers={["Name", "Location", "Price ($)"]}
                   ></Table>
@@ -93,6 +106,7 @@ export default function Explore() {
                 {restaurants.length ? (
                   <Table
                     action={handleListingClick}
+                    actionLabel="Add to Plan"
                     data={listings}
                     headers={["Name", "Location", "Price ($)"]}
                   ></Table>
@@ -108,6 +122,7 @@ export default function Explore() {
                   <Table
                     action={handleEventClick}
                     data={events}
+                    actionLabel="Add to Plan"
                     headers={["Name", "Location", "Price ($)"]}
                   ></Table>
                 ) : (

@@ -67,6 +67,7 @@ const Login: React.FC<AuthProps> = ({ type }: AuthProps) => {
   const onSubmit: SubmitHandler<IAuthForm> = async (data) => {
     console.log(data);
     let response;
+    console.log(type);
     if (type === "login") {
       response = await login({
         email: data.email,
@@ -81,8 +82,10 @@ const Login: React.FC<AuthProps> = ({ type }: AuthProps) => {
         });
       }
     }
+    console.log(response);
     if (response) {
-      setUser({ isLoggedIn: true, ...data });
+      console.log("auth completed");
+      setUser({ isLoggedIn: true, ...response });
       navigate("/dashboard");
     }
   };

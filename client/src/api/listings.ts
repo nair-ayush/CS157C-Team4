@@ -8,3 +8,8 @@ export const addListing = (body: any, config = {}) =>
   api.post("listings", body, config).then((res) => res.data); // TODO body interface for listing
 export const deleteListing = (listingId: string, config = {}) =>
   api.delete(`listings/${listingId}`, config).then((res) => res.data);
+
+export const getListingsByLocation = async (location: string, config = {}) => {
+  console.log("llllll");
+  return [{ id: "123214", name: "Fairmont Hotel" }];
+};

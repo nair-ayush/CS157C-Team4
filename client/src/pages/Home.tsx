@@ -14,25 +14,31 @@ import { TrendingUp } from "@mui/icons-material";
 import DisplayCard from "../components/DisplayCard";
 import { CustomTheme } from "../lib/theme";
 import { TLocation, TPlan, TSearch } from "../lib/types";
-import { getTrendingLocations } from "../api/locations";
+import { getTrendingLocations } from "../api/explore";
 import { Search } from "../components";
 import { useNavigate } from "react-router-dom";
+import { useAtom } from "jotai";
+import { loadingAtom } from "../lib/store";
+import { getTrendingPlans } from "../api/plans";
 
 const Home = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useAtom(loadingAtom);
   const theme: CustomTheme = useTheme() as CustomTheme;
-  const [events, setEvents] = useState<string[]>([]);
+  // const [events, setEvents] = useState<string[]>([]);
   const [trendingLocations, setTrendingLocations] = useState<TLocation[]>([]);
   const [trendingPlans, setTrendingPlans] = useState<TPlan[]>([]);
   const belowMdMatches = useMediaQuery(theme.breakpoints.down("md"));
-  const belowSmMatches = useMediaQuery(theme.breakpoints.down("sm"));
+  // const belowSmMatches = useMediaQuery(theme.breakpoints.down("sm"));
 
   useEffect(() => {
+    setLoading(true);
     const fetchData = async () => {
-      // fetch calls to database for trending locations and plans and set to state
-      // const trendingLocationsResponse = await getTrendingLocations();
-      // if (trendingLocationsResponse)
-      // setTrendingLocations(trendingLocationsResponse);
+      const locationResponse = await getTrendingLocations();
+      if (locationResponse) setTrendingLocations(locationResponse);
+      const planResponse = await getTrendingPlans();
+      if (planResponse) setTrendingPlans(planResponse);
+      setLoading(false);
     };
     fetchData();
   }, []);
@@ -111,7 +117,11 @@ const Home = () => {
             {trendingPlans.map((plan, key) => {
               return (
                 <Grid item lg={2} md={4} xs={6} key={key}>
-                  <DisplayCard {...plan} />
+                  <DisplayCard
+                    label={plan.location}
+                    imageURL={plan.imageURL}
+                    navigateTo={`/plan/${encodeURIComponent(plan.id)}`}
+                  />
                 </Grid>
               );
             })}
@@ -135,7 +145,13 @@ const Home = () => {
             {trendingLocations.map((loc, key) => {
               return (
                 <Grid item lg={2} md={4} xs={6} key={key}>
-                  <DisplayCard {...loc} />
+                  <DisplayCard
+                    imageURL={loc.imageURL}
+                    label={loc.name}
+                    navigateTo={`/explore?location=${encodeURIComponent(
+                      loc.name
+                    )}`}
+                  />
                 </Grid>
               );
             })}

@@ -15,19 +15,19 @@ import {
 import { Adb, Brightness4, Brightness7, Lock } from "@mui/icons-material";
 import { useAtom } from "jotai";
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { userAtom, themeModeAtom } from "../lib/store";
 import { CustomTheme } from "../lib/theme";
 
 const pages = [
   ["Explore", "/explore"],
   ["Dashboard", "/dashboard"],
-  ["Pages", "/plans"],
   ["Contact Us", "/contact-us"],
 ];
 const settings = ["Account", "Logout"];
 
 function Navbar() {
+  const navigate = useNavigate();
   const [user, setUser] = useAtom(userAtom);
   const [themeMode, setThemeMode] = useAtom(themeModeAtom);
   const belowSmMatches = useMediaQuery((theme: CustomTheme) =>
@@ -45,7 +45,10 @@ function Navbar() {
     setAnchorElUser(event.currentTarget);
   };
 
-  const handleLogout = async (event: React.MouseEvent<HTMLElement>) => {};
+  const handleLogout = async () => {
+    setUser({ id: "", name: "", isLoggedIn: false, type: "NORMAL" });
+    navigate("/");
+  };
 
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
@@ -155,6 +158,14 @@ function Navbar() {
                   </>
                 )}
               </MenuItem>
+              <MenuItem key="hello">
+                <Link
+                  to={"/account"}
+                  style={{ textDecoration: "none", color: "inherit" }}
+                >
+                  <Typography textAlign={"center"}>Account</Typography>
+                </Link>
+              </MenuItem>
               {belowSmMatches &&
                 pages.map((page, key) => {
                   if (
@@ -173,6 +184,16 @@ function Navbar() {
                     );
                   else return;
                 })}
+              {user && user.type === "NORMAL" && (
+                <Link
+                  to="/admin"
+                  style={{ textDecoration: "none", color: "inherit" }}
+                >
+                  <MenuItem key="admin">
+                    <Typography textAlign="center">Admin Portal</Typography>
+                  </MenuItem>
+                </Link>
+              )}
               {user && user.name ? (
                 <MenuItem key="logout" onClick={handleLogout}>
                   <Typography textAlign="center">Logout</Typography>
@@ -180,7 +201,7 @@ function Navbar() {
               ) : (
                 <MenuItem key="login">
                   <Link
-                    to={"auth/login"}
+                    to={"/auth/login"}
                     style={{ textDecoration: "none", color: "inherit" }}
                   >
                     <Typography textAlign={"center"}>Login/Register</Typography>

@@ -107,7 +107,8 @@ function TablePaginationActions(props: TablePaginationActionsProps) {
 interface TableData {
   data: any[];
   headers: string[];
-  action: (id: string) => void;
+  actionLabel?: string;
+  action?: (id: string) => void;
 }
 
 export default function Table(props: TableData) {
@@ -144,8 +145,8 @@ export default function Table(props: TableData) {
       >
         <TableHead sx={{ "& th": { backgroundColor: "secondary.light" } }}>
           <TableRow>
-            {props.headers.map((header) => (
-              <TableCell>
+            {props.headers.map((header, idx) => (
+              <TableCell key={idx}>
                 <Typography
                   textTransform="uppercase"
                   fontWeight="bold"
@@ -155,15 +156,17 @@ export default function Table(props: TableData) {
                 </Typography>
               </TableCell>
             ))}
-            <TableCell>
-              <Typography
-                textTransform="uppercase"
-                fontWeight="bold"
-                textAlign="right"
-              >
-                Action
-              </Typography>
-            </TableCell>
+            {props.actionLabel && (
+              <TableCell key="table-action">
+                <Typography
+                  textTransform="uppercase"
+                  fontWeight="bold"
+                  textAlign="right"
+                >
+                  Action
+                </Typography>
+              </TableCell>
+            )}
           </TableRow>
         </TableHead>
         <TableBody>
@@ -175,14 +178,22 @@ export default function Table(props: TableData) {
             : props.data
           ).map((single: any[], idx: number) => (
             <TableRow key={idx} className="trow">
-              {single.map((col) => (
-                <TableCell component="th" scope="row">
+              {single.map((col, idx) => (
+                <TableCell key={idx} component="th" scope="row">
                   {col}
                 </TableCell>
               ))}
-              <TableCell style={{ width: 160 }} align="right">
-                <Button onClick={() => props.action(`${idx}`)}>View</Button>
-              </TableCell>
+              {props.actionLabel && (
+                <TableCell style={{ width: 160 }} align="right">
+                  <Button
+                    onClick={() => {
+                      if (props.action) props.action(`${idx}`);
+                    }}
+                  >
+                    {props.actionLabel}
+                  </Button>
+                </TableCell>
+              )}
             </TableRow>
           ))}
           {emptyRows > 0 && (

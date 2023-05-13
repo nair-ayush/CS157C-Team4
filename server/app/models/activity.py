@@ -45,7 +45,7 @@ class Activity(db.Model):
     @property
     def json(self):
         json_dict = dict(self)
-        json_dict['amenities'] = [a.json for a in self.amenities]
+        # json_dict['amenities'] = [a.json for a in self.amenities]
         json_dict['createdBy'] = self.created_by.json
         del json_dict['created_by']
         json_dict['createdOn'] = self.created_on

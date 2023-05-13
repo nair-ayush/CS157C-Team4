@@ -7,6 +7,7 @@ export interface User {
   email?: string;
   isLoggedIn?: boolean;
   name?: string;
+  type: "NORMAL" | "ADMIN";
   imageUrl?: string;
 }
 
@@ -18,4 +19,4 @@ export const themeModeAtom = atomWithStorage<"light" | "dark">(
 );
 export const themeAtom = atom((get) => theme(get(themeModeAtom)));
 
-export const userAtom = atomWithStorage<User>("user", {});
+export const userAtom = atomWithStorage<User>("explore-mate:user", {});

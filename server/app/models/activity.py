@@ -17,6 +17,7 @@ class User(db.UserType):
     def __self__(self):
         return f'<Activity Creator "{self.name} {self.id}">'
 
+
 class Amenity(db.UserType):
     type = db.columns.Text()
     value = db.columns.Text()
@@ -32,12 +33,13 @@ class Amenity(db.UserType):
 class Activity(db.Model):
 
     __table_name__ = "activities"
-    
+
     id = db.columns.UUID(primary_key=True, default=uuid4)
     name = db.columns.Text(required=True)
     location = db.columns.Text(required=True)
     price = db.columns.Float()
-    metadata = db.columns.List(db.columns.Text()) # Eg., amusement park, restaurant, italian, wifi available 
+    # Eg., amusement park, restaurant, italian, wifi available
+    metadata = db.columns.List(db.columns.Text())
     created_on = db.columns.DateTime(default=datetime.utcnow)
     created_by = db.columns.UserDefinedType(User, required=True)
     updated_on = db.columns.DateTime()
@@ -59,3 +61,19 @@ class Activity(db.Model):
 
     def __self__(self):
         return f'<Activity "{self.name} {self.id}">'
+
+
+class ActivityChurn(db.Model):
+    __table_name__ = "activities_churn"
+    id = db.columns.UUID(primary_key=True)
+    views = db.columns.Counter()
+
+    @property
+    def json(self):
+        return dict(self)
+
+    def __repr__(self):
+        return f'<ActivityChurn "{self.id} {self.views}">'
+
+    def __self__(self):
+        return f'<ActivityChurn "{self.id} {self.views}">'

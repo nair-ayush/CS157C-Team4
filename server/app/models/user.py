@@ -8,7 +8,7 @@ class User(db.Model):
     __table_name__ = "users"
 
     id = db.columns.UUID(primary_key=True, default=uuid4)
-    username = db.columns.Text(required=True, index=True)
+    username = db.columns.Text(primary_key=True, index=True)
     name = db.columns.Text(required=True)
     password = db.columns.Text(min_length=6, required=True)
     type = db.columns.Text(default='NORMAL')

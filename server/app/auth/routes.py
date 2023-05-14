@@ -27,12 +27,17 @@ def login():
 def register():
     body = request.get_json()
     if all(key in body for key in ['username', 'name', 'password']):
-        u = User(username=body['username'], password=hash(
-            body['password'].encode()).hexdigest(), name=body['name'])
-        u.save()
-        token = uuid4()
-        session[str(token)] = body['username']
-        return {"token": token, **u.json}, 201
+        try:
+            queryset: User = User.get(username=body['username'])
+            if queryset:
+                return {"message": "Username already exists"}, 400
+        except _DoesNotExist:
+            u = User(username=body['username'], password=hash(
+                body['password'].encode()).hexdigest(), name=body['name'])
+            u.save()
+            token = uuid4()
+            session[str(token)] = body['username']
+            return {"token": token, **u.json}, 201
     else:
         return {"message": "Bad Request"}, 400
 

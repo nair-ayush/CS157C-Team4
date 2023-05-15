@@ -52,15 +52,17 @@ class Plan(db.Model):
     __table_name__ = "plans"
 
     id = db.columns.UUID(primary_key=True, default=uuid4)
-    location = db.columns.Text()
+    is_public = db.columns.Boolean(default=False)
+    share_url = db.columns.Text()
+    name = db.columns.Text()
     start_date = db.columns.DateTime()
     end_date = db.columns.DateTime()
     budget = db.columns.Integer()
     stay = db.columns.UserDefinedType(Stay)
     activities = db.columns.List(db.columns.UserDefinedType(Activity))
+    created_by = db.columns.UserDefinedType(User, required=True)
     created_on = db.columns.DateTime(default=datetime.utcnow)
     updated_on = db.columns.DateTime(default=datetime.utcnow)
-    created_by = db.columns.UserDefinedType(User, required=True)
 
     @property
     def json(self):
@@ -77,8 +79,10 @@ class Plan(db.Model):
         del json_dict['created_on']
         json_dict['updatedOn'] = self.updated_on
         del json_dict['updated_on']
-        json_dict['updatedBy'] = self.updated_by.json if self.updated_by else None
-        del json_dict['updated_by']
+        json_dict['isPublic'] = self.is_public
+        json_dict['shareUrl'] = self.share_url
+        del json_dict['is_public']
+        del json_dict['share_url']
         return json_dict
 
     def __repr__(self):
@@ -86,3 +90,19 @@ class Plan(db.Model):
 
     def __self__(self):
         return f'<Plan "{self.id}">'
+
+
+class PlanChurn(db.Model):
+    __table_name__ = "plans_churn"
+    id = db.columns.UUID(primary_key=True)
+    views = db.columns.Counter()
+
+    @property
+    def json(self):
+        return dict(self)
+
+    def __repr__(self):
+        return f'<PlanChurn "{self.id} {self.views}">'
+
+    def __self__(self):
+        return f'<PlanChurn "{self.id} {self.views}">'

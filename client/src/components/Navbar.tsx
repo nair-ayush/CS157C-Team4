@@ -1,36 +1,39 @@
-import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
-import Menu from "@mui/material/Menu";
-import MenuIcon from "@mui/icons-material/Menu";
-import Container from "@mui/material/Container";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import Tooltip from "@mui/material/Tooltip";
-import MenuItem from "@mui/material/MenuItem";
-import AdbIcon from "@mui/icons-material/Adb";
-import { Link } from "react-router-dom";
-import { ColorModeContext } from "../App";
-import * as React from "react";
-import { useTheme } from "@emotion/react";
-import Brightness4Icon from "@mui/icons-material/Brightness4";
-import Brightness7Icon from "@mui/icons-material/Brightness7";
-import { useMediaQuery } from "@mui/material";
-import { CustomTheme } from "../theme";
+import {
+  useMediaQuery,
+  AppBar,
+  Container,
+  Toolbar,
+  Typography,
+  Box,
+  Button,
+  Tooltip,
+  IconButton,
+  Avatar,
+  Menu,
+  MenuItem,
+} from "@mui/material";
+import { Adb, Brightness4, Brightness7, Lock } from "@mui/icons-material";
+import { useAtom } from "jotai";
+import React from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { userAtom, themeModeAtom } from "../lib/store";
+import { CustomTheme } from "../lib/theme";
 
-const pages = ["Explore", "Dashboard", "Account", "Contact Us"];
-const pageURLs = ["/explore", "/dashboard", "account", "contact-us"];
-const settings = ["Logout"];
+const pages = [
+  ["Explore", "/explore"],
+  ["Dashboard", "/dashboard"],
+  ["Contact Us", "/contact-us"],
+];
+const settings = ["Account", "Logout"];
 
 function Navbar() {
-  const colorMode = React.useContext(ColorModeContext);
-  const theme: CustomTheme = useTheme() as CustomTheme;
-  const belowSmMatches = useMediaQuery(theme.breakpoints.down("sm"));
-  const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
-    null
+  const navigate = useNavigate();
+  const [user, setUser] = useAtom(userAtom);
+  const [themeMode, setThemeMode] = useAtom(themeModeAtom);
+  const belowSmMatches = useMediaQuery((theme: CustomTheme) =>
+    theme.breakpoints.down("sm")
   );
+  const [_, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null
   );
@@ -42,6 +45,11 @@ function Navbar() {
     setAnchorElUser(event.currentTarget);
   };
 
+  const handleLogout = async () => {
+    setUser({ id: "", name: "", isLoggedIn: false, type: "NORMAL" });
+    navigate("/");
+  };
+
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
   };
@@ -50,20 +58,23 @@ function Navbar() {
     setAnchorElUser(null);
   };
 
+  const toggleTheme = () => {
+    setThemeMode(themeMode === "light" ? "dark" : "light");
+    setAnchorElUser(null);
+  };
+
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <AdbIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
+          <Adb sx={{ mr: 1 }} />
           <Typography
             variant="h6"
             noWrap
             sx={{
               mr: 2,
               display: { xs: "none", md: "flex" },
-              // fontFamily: "monospace",
               fontWeight: 700,
-              // letterSpacing: ".1rem",
               color: "inherit",
               textDecoration: "none",
             }}
@@ -72,67 +83,7 @@ function Navbar() {
               EXPLORE MATE
             </Link>
           </Typography>
-
-          {/* <Box
-            sx={{
-              flexGrow: 1,
-              display: { xs: "flex", md: "none" },
-            }}
-          >
-            <IconButton
-              size="large"
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={handleOpenNavMenu}
-              color="inherit"
-            >
-              <MenuIcon />
-            </IconButton>
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorElNav}
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "left",
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "left",
-              }}
-              open={Boolean(anchorElNav)}
-              onClose={handleCloseNavMenu}
-              sx={{
-                display: { xs: "block", md: "none" },
-              }}
-            >
-              {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
-                </MenuItem>
-              ))}
-            </Menu>
-          </Box> */}
-          <AdbIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
-          <Typography
-            variant="h5"
-            noWrap
-            component="a"
-            href=""
-            sx={{
-              mr: 2,
-              display: { xs: "flex", md: "none" },
-              flexGrow: 1,
-              fontFamily: "monospace",
-              fontWeight: 700,
-              letterSpacing: ".3rem",
-              color: "inherit",
-              textDecoration: "none",
-            }}
-          >
-            EXPLORE MATE
-          </Typography>
+          <Box sx={{ flexGrow: 1 }}></Box>
           <Box
             sx={{
               flexGrow: 1,
@@ -140,26 +91,42 @@ function Navbar() {
               justifyContent: "flex-end",
             }}
           >
-            {pages.map((page, key) => (
-              <Link
-                to={pageURLs[key]}
-                key={page}
-                style={{ textDecoration: "none" }}
-              >
-                <Button
-                  onClick={handleCloseNavMenu}
-                  sx={{ my: 2, color: "white", display: "block" }}
-                >
-                  {page}
-                </Button>
-              </Link>
-            ))}
+            {pages.map((page, key) => {
+              if (
+                page[0] !== "Dashboard" ||
+                (user.isLoggedIn && page[0] === "Dashboard")
+              )
+                return (
+                  <Link
+                    to={page[1]}
+                    key={key}
+                    style={{ textDecoration: "none" }}
+                  >
+                    <Button
+                      onClick={handleCloseNavMenu}
+                      sx={{ my: 2, color: "white", display: "block" }}
+                    >
+                      {page[0]}
+                    </Button>
+                  </Link>
+                );
+              else return;
+            })}
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                <Avatar alt={user.name || "not logged in"}>
+                  {user.isLoggedIn ? (
+                    user.name
+                      ?.split(" ")
+                      .map((stub) => stub.charAt(0).toUpperCase())
+                      .join("")
+                  ) : (
+                    <Lock />
+                  )}
+                </Avatar>
               </IconButton>
             </Tooltip>
             <Menu
@@ -178,32 +145,69 @@ function Navbar() {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              <MenuItem key="theme" onClick={colorMode.toggleColorMode}>
-                {theme.palette.mode === "dark" ? (
+              <MenuItem key="theme" onClick={toggleTheme}>
+                {themeMode === "dark" ? (
                   <>
-                    <Brightness7Icon sx={{ mr: 1 }} />
+                    <Brightness7 sx={{ mr: 1 }} />
                     <Typography textAlign="center">Light Mode</Typography>
                   </>
                 ) : (
                   <>
-                    <Brightness4Icon sx={{ mr: 1 }} />
+                    <Brightness4 sx={{ mr: 1 }} />
                     <Typography textAlign="center">Dark Mode</Typography>
                   </>
                 )}
               </MenuItem>
+              <MenuItem key="hello">
+                <Link
+                  to={"/account"}
+                  style={{ textDecoration: "none", color: "inherit" }}
+                >
+                  <Typography textAlign={"center"}>Account</Typography>
+                </Link>
+              </MenuItem>
               {belowSmMatches &&
-                pages.map((page, key) => (
-                  <MenuItem key={page} onClick={handleCloseUserMenu}>
-                    <Link to={pageURLs[key]}>
-                      <Typography textAlign="center">{page}</Typography>
-                    </Link>
+                pages.map((page, key) => {
+                  if (
+                    page[0] !== "Dashboard" ||
+                    (user.isLoggedIn && page[0] === "Dashboard")
+                  )
+                    return (
+                      <MenuItem key={key} onClick={handleCloseUserMenu}>
+                        <Link
+                          to={page[1]}
+                          style={{ textDecoration: "none", color: "inherit" }}
+                        >
+                          <Typography textAlign="center">{page[0]}</Typography>
+                        </Link>
+                      </MenuItem>
+                    );
+                  else return;
+                })}
+              {user && user.type === "NORMAL" && (
+                <Link
+                  to="/admin"
+                  style={{ textDecoration: "none", color: "inherit" }}
+                >
+                  <MenuItem key="admin">
+                    <Typography textAlign="center">Admin Portal</Typography>
                   </MenuItem>
-                ))}
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
+                </Link>
+              )}
+              {user && user.name ? (
+                <MenuItem key="logout" onClick={handleLogout}>
+                  <Typography textAlign="center">Logout</Typography>
                 </MenuItem>
-              ))}
+              ) : (
+                <MenuItem key="login">
+                  <Link
+                    to={"/auth/login"}
+                    style={{ textDecoration: "none", color: "inherit" }}
+                  >
+                    <Typography textAlign={"center"}>Login/Register</Typography>
+                  </Link>
+                </MenuItem>
+              )}
             </Menu>
           </Box>
         </Toolbar>

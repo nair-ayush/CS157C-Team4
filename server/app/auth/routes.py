@@ -17,8 +17,10 @@ def login():
             if queryset.password != hash(body['password'].encode()).hexdigest():
                 return {"message": "Invalid Credentials"}, 400
             token = uuid4()
+            user = queryset.json
+            del user['savedPlans']
             session[str(token)] = body['username']
-            return {"token": token, **queryset.json}
+            return {"token": token, **user}
         except _DoesNotExist:
             return {"message": "Invalid Credentials"}, 400
 
@@ -27,12 +29,19 @@ def login():
 def register():
     body = request.get_json()
     if all(key in body for key in ['username', 'name', 'password']):
-        u = User(username=body['username'], password=hash(
-            body['password'].encode()).hexdigest(), name=body['name'])
-        u.save()
-        token = uuid4()
-        session[str(token)] = body['username']
-        return {"token": token, **u.json}, 201
+        try:
+            queryset: User = User.get(username=body['username'])
+            if queryset:
+                return {"message": "Username already exists"}, 400
+        except _DoesNotExist:
+            u = User(username=body['username'], password=hash(
+                body['password'].encode()).hexdigest(), name=body['name'])
+            u.save()
+            token = uuid4()
+            result = u.json
+            del result['savedPlans']
+            session[str(token)] = body['username']
+            return {"token": token, **result}, 201
     else:
         return {"message": "Bad Request"}, 400
 

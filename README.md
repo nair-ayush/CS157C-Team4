@@ -1,7 +1,9 @@
 # CS157C-Team4
 
 Faculty: Prof. Mike Wu
+
 ## Team Members
+
 - Ayush Nair
 - Khue Do Anh Nguyen (updated a change)
 - Chinmayi Lokeshwar Hegde
@@ -26,7 +28,7 @@ Faculty: Prof. Mike Wu
     - Tabulated windows
       - Listings
       - Events/Landmarks/Restaurants
-6.  Admin Screen (K)
+6.  Admin Screen (A)
     - Tabulated windows for listings/events (CRUD)
 7.  Account (K)
     - Profile details (CRUD)

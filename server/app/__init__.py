@@ -2,21 +2,22 @@ from flask import Flask
 from flask_cors import CORS
 from config import Config
 from app.extensions import db
+import os
 
 
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
-
+    os.environ['CQLENG_ALLOW_SCHEMA_MANAGEMENT'] = '1'
     # Initialize Flask extensions here
     CORS(app, resources={r'/*': {'origins': '*'}})
     db.init_app(app)
 
     with app.app_context():
-        from app.models.activity import Activity
-        from app.models.listing import Listing
+        from app.models.activity import Activity, ActivityChurn
+        from app.models.listing import Listing, ListingChurn
         from app.models.user import User
-        from app.models.plan import Plan
+        from app.models.plan import Plan, PlanChurn
         db.sync_db()
 
         # Register blueprints here

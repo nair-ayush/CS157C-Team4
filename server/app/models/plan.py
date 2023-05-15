@@ -52,6 +52,8 @@ class Plan(db.Model):
     __table_name__ = "plans"
 
     id = db.columns.UUID(primary_key=True, default=uuid4)
+    is_public = db.columns.Boolean(default=False)
+    share_url = db.columns.Text()
     name = db.columns.Text()
     start_date = db.columns.DateTime()
     end_date = db.columns.DateTime()

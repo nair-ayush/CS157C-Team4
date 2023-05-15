@@ -1,3 +1,4 @@
+from uuid import uuid4
 from flask import request
 from app.plans import bp
 from datetime import datetime
@@ -52,6 +53,28 @@ def get_trending_plans(count):
         result[idx]['views'] = order[result[idx]['id']]
     result.sort(key=lambda x: x['views'], reverse=True)
     return result, 200
+
+
+@bp.post('/share')
+def toggle_plan_share():
+    body = request.get_json()
+    if 'id' in body and 'public' in body:
+        try:
+            queryset = Plan.get(id=body['id'])
+            if body['public']:
+                queryset.update(is_public=True)
+                new_link = uuid4()
+                queryset.update(share_url=str(new_link))
+                return {"shareUrl": str(new_link), "message": "Plan successfully toggled"}, 203
+            else:
+                queryset.update(is_public=False)
+                queryset.update(share_url="")
+                return {"shareUrl": "", "message": "Plan successfully toggled"}, 203
+
+        except _DoesNotExist:
+            return {"message": "No such plan exists"}, 400
+    else:
+        return {"message": "Bad Request"}, 400
 
 
 @bp.post('/')

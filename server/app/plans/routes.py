@@ -19,6 +19,32 @@ def get_all_plans():
     return [q.json for q in queryset]
 
 
+@bp.get('/user/<uuid:user_id>')
+def get_plans_created_by_user(user_id):
+    try:
+        User.get(id=user_id)
+        queryset = [p.json for p in Plan.all()]
+        result = []
+        for plan in queryset:
+            if plan['createdBy']['id'] == user_id:
+                result.append(plan)
+        return result, 200
+    except _DoesNotExist:
+        return {"message": "No such user exists"}, 400
+
+
+@bp.get('/saved/<uuid:user_id>')
+def get_plans_saved_by_user(user_id):
+    try:
+        user = User.get(id=user_id).json
+        plans = []
+        for plan_id in user['savedPlans']:
+            plans.append(Plan.get(id=plan_id).json)
+        return plans, 200
+    except _DoesNotExist:
+        return {"message": "No such user exists"}, 400
+
+
 @bp.get('/<uuid:plan_id>')
 def get_plan(plan_id):
     try:
@@ -75,6 +101,42 @@ def toggle_plan_share():
             return {"message": "No such plan exists"}, 400
     else:
         return {"message": "Bad Request"}, 400
+
+
+@bp.post('/save')
+def save_plan_for_user():
+    body = request.get_json()
+    if 'userId' in body and 'planId' in body:
+        try:
+            queryset = User.get(id=body['userId'])
+            Plan.get(id=body['planId'])
+            queryset.update(
+                saved_plans=[*queryset.saved_plans, body['planId']])
+            return {"message": "Plan saved successfully"}, 203
+        except _DoesNotExist:
+            return {"message": "No such plan or user exists"}, 400
+    else:
+        return {"message", "Bade Request"}, 400
+
+
+@bp.post('/unsave')
+def unsave_plan_for_user():
+    body = request.get_json()
+    if 'userId' in body and 'planId' in body:
+        try:
+            queryset = User.get(id=body['userId'])
+            Plan.get(id=body['planId'])
+            print(queryset.saved_plans)
+            new_plans = [
+                plan for plan in queryset.saved_plans if str(plan) != body['planId']]
+            print(new_plans)
+            queryset.update(
+                saved_plans=new_plans)
+            return {"message": "Plan unsaved successfully"}, 203
+        except _DoesNotExist:
+            return {"message": "No such plan or user exists"}, 400
+    else:
+        return {"message", "Bade Request"}, 400
 
 
 @bp.post('/')

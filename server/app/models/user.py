@@ -13,6 +13,7 @@ class User(db.Model):
     password = db.columns.Text(min_length=6, required=True)
     type = db.columns.Text(default='NORMAL')
     created_on = db.columns.DateTime(default=datetime.utcnow)
+    saved_plans = db.columns.List(db.columns.UUID)
     updated_on = db.columns.DateTime()
 
     @property
@@ -23,6 +24,8 @@ class User(db.Model):
         del json_dict['created_on']
         json_dict['updatedOn'] = self.updated_on
         del json_dict['updated_on']
+        json_dict['savedPlans'] = self.saved_plans
+        del json_dict['saved_plans']
         return json_dict
 
     def __repr__(self):

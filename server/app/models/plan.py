@@ -79,8 +79,10 @@ class Plan(db.Model):
         del json_dict['created_on']
         json_dict['updatedOn'] = self.updated_on
         del json_dict['updated_on']
-        # json_dict['updatedBy'] = self.updated_by.json if self.updated_by else None
-        # del json_dict['updated_by']
+        json_dict['isPublic'] = self.is_public
+        json_dict['shareUrl'] = self.share_url
+        del json_dict['is_public']
+        del json_dict['share_url']
         return json_dict
 
     def __repr__(self):

@@ -32,7 +32,7 @@ def update_user(user_id):
             queryset.update(password=hash(
                 body['password'].encode()).hexdigest()
             )
-            queryset.update('updated_on', datetime.now())
+            queryset.update(updated_on=datetime.now())
             return {"message": "User updated successfully", "id": user_id}, 203
         else:
             return {"message": "Bad Request"}, 400

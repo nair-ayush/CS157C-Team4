@@ -8,25 +8,26 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import Container from "@mui/material/Container";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import { TrendingUp } from "@mui/icons-material";
 import DisplayCard from "../components/DisplayCard";
 import { CustomTheme } from "../lib/theme";
-import { TLocation, TPlan, TSearch } from "../lib/types";
-import { getTrendingLocations } from "../api/explore";
 import { Search } from "../components";
 import { useNavigate } from "react-router-dom";
 import { useAtom } from "jotai";
 import { loadingAtom } from "../lib/store";
 import { getTrendingPlans } from "../api/plans";
+import { TActivity, TListing, TPlan, TSearch } from "../lib/types";
+import { getTrendingListings } from "../api/listings";
+import { getTrendingActivities } from "../api/activities";
 
 const Home = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useAtom(loadingAtom);
   const theme: CustomTheme = useTheme() as CustomTheme;
-  // const [events, setEvents] = useState<string[]>([]);
-  const [trendingLocations, setTrendingLocations] = useState<TLocation[]>([]);
+  const [trendingActivities, setTrendingActivities] = useState<TActivity[]>([]);
+  const [trendingListings, setTrendingListings] = useState<TListing[]>([]);
   const [trendingPlans, setTrendingPlans] = useState<TPlan[]>([]);
   const belowMdMatches = useMediaQuery(theme.breakpoints.down("md"));
   // const belowSmMatches = useMediaQuery(theme.breakpoints.down("sm"));
@@ -34,10 +35,15 @@ const Home = () => {
   useEffect(() => {
     setLoading(true);
     const fetchData = async () => {
-      const locationResponse = await getTrendingLocations();
-      if (locationResponse) setTrendingLocations(locationResponse);
-      const planResponse = await getTrendingPlans();
-      if (planResponse) setTrendingPlans(planResponse);
+      const [plansResponse, listingsResponse, activitiesResponse] =
+        await Promise.all([
+          getTrendingPlans(),
+          getTrendingListings(),
+          getTrendingActivities(),
+        ]);
+      setTrendingPlans(plansResponse);
+      setTrendingListings(listingsResponse);
+      setTrendingActivities(activitiesResponse);
       setLoading(false);
     };
     fetchData();
@@ -87,76 +93,106 @@ const Home = () => {
         </Typography>
       </Box>
       <Container maxWidth="xl" sx={{ my: 2, flex: "1 1 auto" }}>
-        <Box>
-          <Box pt={2} display={"flex"} alignItems={"center"}>
-            <TrendingUp color="secondary" />
-            <Typography
-              variant="h5"
-              sx={{ fontStyle: "italic" }}
-              color="secondary"
+        {!loading && (
+          <Box>
+            <Box pt={2} display={"flex"} alignItems={"center"}>
+              <TrendingUp color="secondary" />
+              <Typography
+                variant="h5"
+                sx={{ fontStyle: "italic" }}
+                color="secondary"
+              >
+                Trending
+              </Typography>
+            </Box>
+            <Box
+              pt={2}
+              display={"flex"}
+              justifyContent={"space-between"}
+              alignItems={"center"}
             >
-              Trending
-            </Typography>
-          </Box>
-          <Box
-            pt={2}
-            display={"flex"}
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            <Typography
-              variant="h6"
-              sx={{ fontStyle: "italic" }}
-              color="secondary"
+              <Typography
+                variant="h6"
+                sx={{ fontStyle: "italic" }}
+                color="secondary"
+              >
+                Plans
+              </Typography>
+              <Typography variant="subtitle2">See More</Typography>
+            </Box>
+            <Grid container spacing={2} pt={2}>
+              {trendingPlans.map((plan, key) => {
+                return (
+                  <Grid item lg={2} md={4} xs={6} key={key}>
+                    <DisplayCard
+                      label={plan.name}
+                      imageURL={plan.imageURL}
+                      navigateTo={`/plan/${encodeURIComponent(plan.id)}`}
+                    />
+                  </Grid>
+                );
+              })}
+            </Grid>
+            <Box
+              pt={2}
+              display={"flex"}
+              justifyContent={"space-between"}
+              alignItems={"center"}
             >
-              Plans
-            </Typography>
-            <Typography variant="subtitle2">See More</Typography>
-          </Box>
-          <Grid container spacing={2} pt={2}>
-            {trendingPlans.map((plan, key) => {
-              return (
-                <Grid item lg={2} md={4} xs={6} key={key}>
-                  <DisplayCard
-                    label={plan.location}
-                    imageURL={plan.imageURL}
-                    navigateTo={`/plan/${encodeURIComponent(plan.id)}`}
-                  />
-                </Grid>
-              );
-            })}
-          </Grid>
-          <Box
-            pt={2}
-            display={"flex"}
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            <Typography
-              variant="h6"
-              sx={{ fontStyle: "italic" }}
-              color="secondary"
+              <Typography
+                variant="h6"
+                sx={{ fontStyle: "italic" }}
+                color="secondary"
+              >
+                Stays
+              </Typography>
+              <Typography variant="subtitle2">See More</Typography>
+            </Box>
+            <Grid container spacing={2} pt={2}>
+              {trendingListings.map((listing, key) => {
+                return (
+                  <Grid item lg={2} md={4} xs={6} key={key}>
+                    <DisplayCard
+                      imageURL={listing.imageURL}
+                      label={listing.name}
+                      navigateTo={`/stay/${encodeURIComponent(listing.id)}`}
+                    />
+                  </Grid>
+                );
+              })}
+            </Grid>
+            <Box
+              pt={2}
+              display={"flex"}
+              justifyContent={"space-between"}
+              alignItems={"center"}
             >
-              Locations
-            </Typography>
-            <Typography variant="subtitle2">See More</Typography>
+              <Typography
+                variant="h6"
+                sx={{ fontStyle: "italic" }}
+                color="secondary"
+              >
+                Activities
+              </Typography>
+              <Typography variant="subtitle2">See More</Typography>
+            </Box>
+            <Grid container spacing={2} pt={2}>
+              {trendingActivities.map((activity, key) => {
+                return (
+                  <Grid item lg={2} md={4} xs={6} key={key}>
+                    <DisplayCard
+                      imageURL={activity.imageURL}
+                      label={activity.name}
+                      navigateTo={`/activity/${encodeURIComponent(
+                        activity.id
+                      )}`}
+                    />
+                  </Grid>
+                );
+              })}
+            </Grid>
           </Box>
-          <Grid container spacing={2} pt={2}>
-            {trendingLocations.map((loc, key) => {
-              return (
-                <Grid item lg={2} md={4} xs={6} key={key}>
-                  <DisplayCard
-                    imageURL={loc.imageURL}
-                    label={loc.name}
-                    navigateTo={`/explore?location=${encodeURIComponent(
-                      loc.name
-                    )}`}
-                  />
-                </Grid>
-              );
-            })}
-          </Grid>
-        </Box>
+        )}
       </Container>
     </>
   );

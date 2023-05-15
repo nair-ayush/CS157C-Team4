@@ -1,4 +1,4 @@
-import { TLocation, TPlan, TSearch } from "../lib/types";
+import { TPlan, TSearch } from "../lib/types";
 import api from "./api";
 
 function createData(name: string, city: string, price: number) {
@@ -131,31 +131,3 @@ export const getSearch = async (data: TSearch, config = {}) => {
       }),
   };
 };
-
-export const getTrendingLocations = (config = {}): TLocation[] => [
-  {
-    name: "San Francisco",
-    imageURL:
-      "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1844&q=80",
-  },
-  {
-    name: "New York",
-    imageURL:
-      "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
-  },
-  {
-    name: "London",
-    imageURL:
-      "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1740&q=80",
-  },
-  {
-    name: "Melbourne",
-    imageURL:
-      "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1844&q=80",
-  },
-  {
-    name: "Chicago",
-    imageURL:
-      "https://images.unsplash.com/photo-1514565131-fce0801e5785?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1856&q=80",
-  },
-];

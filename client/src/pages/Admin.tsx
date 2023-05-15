@@ -210,9 +210,9 @@ export default function Admin() {
                         action={handlePlanClick}
                         actionLabel="View"
                         data={plans.map((item) => [
-                          item.location,
+                          item.name,
                           "$".repeat(item.budget),
-                          item.stayName,
+                          item.stay.name,
                         ])}
                         headers={["Location", "Budget", "Stay"]}
                       ></Table>

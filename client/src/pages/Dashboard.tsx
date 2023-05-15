@@ -15,32 +15,39 @@ import {
   CardActions,
   Container,
   Divider,
+  useMediaQuery,
 } from "@mui/material";
 import { loadingAtom, userAtom } from "../lib/store";
 import { useAtom } from "jotai";
 import { useState, useEffect } from "react";
 import { TPlan } from "../lib/types";
-import { getPlansByUser } from "../api/plans";
+import { getPlansByUser, getSavedPlansByUser } from "../api/plans";
 import { CalendarMonth, LocationOn, People } from "@mui/icons-material";
 import { Link } from "react-router-dom";
+import { convertToUserShortDate } from "../lib/util";
+import { CustomTheme } from "../lib/theme";
 
 function Dashboard() {
   const [user] = useAtom(userAtom);
   const [userPlans, setUserPlans] = useState<TPlan[]>([]);
   const [savedPlans, setSavedPlans] = useState<TPlan[]>([]);
   const [loading, setLoading] = useAtom(loadingAtom);
+  const belowSmMatches = useMediaQuery((theme: CustomTheme) =>
+    theme.breakpoints.down("sm")
+  );
 
   useEffect(() => {
     setLoading(true);
-    const fetchData = async () => {
-      const response = await getPlansByUser(+user.id!);
-      if (response) {
-        setUserPlans(response.userPlans ?? []);
-        setSavedPlans(response.savedPlans ?? []);
-      }
+    const fetchData = async (id: string) => {
+      const [userPlansResponse, savedPlansResponse] = await Promise.all([
+        getPlansByUser(id),
+        getSavedPlansByUser(id),
+      ]);
+      setUserPlans(userPlansResponse ?? []);
+      setSavedPlans(savedPlansResponse ?? []);
       setLoading(false);
     };
-    fetchData();
+    if (user.id) fetchData(user.id);
   }, [user]);
 
   return (
@@ -50,11 +57,12 @@ function Dashboard() {
         <Box
           pt={5}
           display="flex"
+          flexDirection={belowSmMatches ? "column" : "row"}
           gap={2}
           alignItems="center"
           justifyContent="space-between"
         >
-          <Typography variant="h2" fontStyle="italic">
+          <Typography variant={belowSmMatches ? "h4" : "h2"} fontStyle="italic">
             Welcome, {user.name}
           </Typography>
           <Link
@@ -66,17 +74,15 @@ function Dashboard() {
             </Typography>
           </Link>
         </Box>
-        <Divider />
+        <Divider sx={{ m: 2 }} />
         <Typography variant="h4">Your plans</Typography>
-        <Grid container spacing={6} py={4}>
+        <Grid container spacing={2} py={4}>
           {userPlans.map((plan) => {
             return (
               <Grid item xs={12} sm={6} md={4} key={plan.id}>
                 <Card className="card">
                   <CardHeader
-                    title={
-                      <Typography variant="h5">{plan.location}</Typography>
-                    }
+                    title={<Typography variant="h5">{plan.name}</Typography>}
                     action={
                       <Link to={`/plan/${plan.id}`}>
                         <button className="button">
@@ -94,12 +100,6 @@ function Dashboard() {
                   />
                   <CardContent className="card-details" sx={{ py: 4 }}>
                     <Stack direction="row" flexWrap={"wrap"} gap={2}>
-                      <Chip
-                        size="small"
-                        icon={<People />}
-                        color="warning"
-                        label={`Saved By:  ${6}`}
-                      />
                       {/* <Chip
                         size="small"
                         color="primary"
@@ -110,13 +110,15 @@ function Dashboard() {
                         size="small"
                         color="secondary"
                         icon={<CalendarMonth />}
-                        label={`Start: ${plan.startDate}`}
+                        label={`Start: ${convertToUserShortDate(
+                          plan.startDate
+                        )}`}
                       />
                       <Chip
                         size="small"
                         color="error"
                         icon={<CalendarMonth />}
-                        label={`End: ${plan.endDate}`}
+                        label={`End: ${convertToUserShortDate(plan.endDate)}`}
                       />
                     </Stack>
                   </CardContent>
@@ -131,7 +133,7 @@ function Dashboard() {
             <Grid key={plan.id} item xs={12} sm={6} md={4}>
               <Card className="card">
                 <CardHeader
-                  title={<Typography variant="h5">{plan.location}</Typography>}
+                  title={<Typography variant="h5">{plan.name}</Typography>}
                   action={
                     <Link to={`/plan/${plan.id}`}>
                       <button className="button">
@@ -149,12 +151,6 @@ function Dashboard() {
                 />
                 <CardContent className="card-details" sx={{ py: 4 }}>
                   <Stack direction="row" flexWrap={"wrap"} gap={2}>
-                    <Chip
-                      size="small"
-                      icon={<People />}
-                      color="warning"
-                      label={`Saved By:  ${6}`}
-                    />
                     {/* <Chip
                       size="small"
                       color="primary"
@@ -165,13 +161,13 @@ function Dashboard() {
                       size="small"
                       color="secondary"
                       icon={<CalendarMonth />}
-                      label={`Start: ${plan.startDate}`}
+                      label={`Start: ${convertToUserShortDate(plan.startDate)}`}
                     />
                     <Chip
                       size="small"
                       color="error"
                       icon={<CalendarMonth />}
-                      label={`End: ${plan.endDate}`}
+                      label={`End: ${convertToUserShortDate(plan.endDate)}`}
                     />
                   </Stack>
                 </CardContent>

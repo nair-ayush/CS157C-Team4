@@ -1,5 +1,5 @@
-import { Controller, useForm } from "react-hook-form";
-import { TFActivity, TPlanForm } from "../lib/types";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { TFActivity, TFListing, TPlanForm } from "../lib/types";
 import {
   Box,
   Button,
@@ -20,6 +20,7 @@ import {
   Add,
   AddBoxOutlined,
   Close,
+  Edit,
   Image,
   LocationOn,
 } from "@mui/icons-material";
@@ -32,89 +33,94 @@ import { useEffect, useMemo, useState } from "react";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { CustomTheme } from "../lib/theme";
 import moment from "moment";
-import { getListingsByLocation } from "../api/listings";
-import { getActivitiesByLocation } from "../api/activities";
+import { listAllActivities } from "../api/activities";
+import { listAllListings } from "../api/listings";
+import { useAtom } from "jotai";
+import { loadingAtom } from "../lib/store";
 
 interface PlanFormProps extends TPlanForm {
-  onSubmit: (data: TPlanForm) => void;
+  onSubmit: (data: any) => void;
 }
 
 export default function PlanForm(props: PlanFormProps) {
+  const [loading, setLoading] = useAtom(loadingAtom);
   const { control, handleSubmit, setValue } = useForm<TPlanForm>();
   const [activities, setActivities] = useState<TFActivity[]>([]);
-  const [activityOptions, setActivityOptions] = useState<TFActivity[]>([]);
-  const [listings, setListings] = useState<any[]>([]);
+  const [selectedActivities, setSelectedActivities] = useState<string[]>([]);
+  const [listings, setListings] = useState<TFListing[]>([]);
   const belowMdMatches = useMediaQuery((theme: CustomTheme) =>
     theme.breakpoints.down("md")
   );
 
   useEffect(() => {
+    setLoading(true);
     if (props) {
-      setValue(
-        "startDate",
-        props.startDate ? moment(props.startDate, "YYYY-MM-DD") : null
-      );
-      setValue(
-        "endDate",
-        props.endDate ? moment(props.endDate, "YYYY-MM-DD") : null
-      );
-      setValue("location", props.location);
-      setValue("stayId", "");
+      console.log(props.startDate);
+      setValue("name", props.name ?? "");
+      setValue("stay", props.stay ?? "");
+      setValue("budget", `${props.budget}` ?? "");
+      setValue("startDate", props.startDate ? moment(props.startDate) : null);
+      setValue("endDate", props.endDate ? moment(props.endDate) : null);
+      setSelectedActivities(props.activities ?? []);
     }
-  }, [props, setValue]);
+    const fetchData = async () => {
+      const [listingsResponse, activitiesResponse] = await Promise.all([
+        listAllListings(),
+        listAllActivities(),
+      ]);
+      setListings(
+        listingsResponse.map((item) => ({ id: item.id, name: item.name }))
+      );
+      setActivities(
+        activitiesResponse.map((item) => ({ id: item.id, name: item.name }))
+      );
+      setLoading(false);
+    };
+    fetchData();
+  }, []);
 
   const addActivity = () => {
-    if (activities.length)
-      setActivities((prev) => [...prev, { id: "", name: "" }]);
-    else setActivities([{ id: "", name: "" }]);
+    setSelectedActivities((prev) => [...prev, ""]);
   };
 
   const removeActivity = (index: number) =>
-    setActivities((prev) => [
+    setSelectedActivities((prev) => [
       ...prev.slice(0, index),
       ...prev.slice(index + 1),
     ]);
-
-  const updateMetaData = async (value: string | undefined) => {
-    if (value) {
-      const stayResponse = await getListingsByLocation(value);
-      if (stayResponse) setListings(stayResponse);
-      const activityResponse = await getActivitiesByLocation(value);
-      if (activityResponse) setActivityOptions(activityResponse);
-    }
-  };
 
   const DatePicker = useMemo(
     () => (belowMdMatches ? MobileDatePicker : DesktopDatePicker),
     [belowMdMatches]
   );
+
+  const onFormSubmit: SubmitHandler<TPlanForm> = (data) => {
+    props.onSubmit({
+      ...data,
+      stay: listings.find((predicate) => predicate.id === data.stay),
+    });
+  };
+
   return (
     <LocalizationProvider dateAdapter={AdapterMoment}>
       <Grid
         container
         spacing={2}
         component="form"
-        onSubmit={handleSubmit(props.onSubmit)}
+        onSubmit={handleSubmit(onFormSubmit)}
       >
-        {props.id && (
-          <Grid item xs={12}>
-            <Typography>Plan ID: {props.id}</Typography>
-          </Grid>
-        )}
         <Grid item xs={12} md={4}>
           <Controller
-            name="location"
+            name="name"
             control={control}
             render={({ field }) => (
               <TextField
                 {...field}
-                onBlur={() => updateMetaData(field.value)}
-                placeholder="Enter location..."
-                label="Where"
+                placeholder="Enter name..."
+                label="Name"
                 size={belowMdMatches ? "small" : undefined}
                 fullWidth
                 autoFocus
-                InputProps={{ endAdornment: <LocationOn /> }}
               />
             )}
           />
@@ -159,7 +165,7 @@ export default function PlanForm(props: PlanFormProps) {
             )}
           />
         </Grid>
-        <Grid item xs={12} md={3}>
+        {/* <Grid item xs={12} md={3}>
           <Controller
             name="imageURL"
             control={control}
@@ -174,28 +180,28 @@ export default function PlanForm(props: PlanFormProps) {
               />
             )}
           />
-        </Grid>
-        <Grid item xs={12} md={5}>
+        </Grid> */}
+        <Grid item xs={12} md={6}>
           <Controller
-            name="stayId"
-            control={control}
+            name="stay"
             defaultValue=""
+            control={control}
             render={({ field }) => (
               <FormControl fullWidth>
-                <InputLabel id="form-select">Stay</InputLabel>
+                <InputLabel id="stay-select">Stay</InputLabel>
                 <Select
-                  labelId="form-select"
-                  id="demo-simple-select"
+                  labelId="stay-select"
+                  id="stay-select-select"
                   label="Stay"
                   {...field}
                 >
-                  {/* {listings.length > 0 &&
+                  {listings.length > 0 &&
                     listings.map((item) => (
                       <MenuItem key={item.id} value={item.id}>
                         {item.name}
                       </MenuItem>
-                    ))} */}
-                  <MenuItem value={1}>Fairmont Hotel</MenuItem>
+                    ))}
+                  {/* <MenuItem value={1}>Fairmont Hotel</MenuItem> */}
                 </Select>
               </FormControl>
             )}
@@ -204,7 +210,7 @@ export default function PlanForm(props: PlanFormProps) {
         <Grid
           item
           xs={12}
-          md={4}
+          md={6}
           display="flex"
           justifyContent="center"
           gap={2}
@@ -265,7 +271,8 @@ export default function PlanForm(props: PlanFormProps) {
                 <Grid item xs={6}>
                   <Typography variant="h5" component="h5">
                     Activities{" "}
-                    {activities.length > 0 && `(${activities.length})`}
+                    {selectedActivities.length > 0 &&
+                      `(${selectedActivities.length})`}
                   </Typography>
                 </Grid>
                 <Grid item xs={6} textAlign="right">
@@ -273,38 +280,45 @@ export default function PlanForm(props: PlanFormProps) {
                     New Activity
                   </Button>
                 </Grid>
-                {activities.length > 0 && (
+                {selectedActivities.length > 0 && (
                   <Grid item xs={12}>
-                    {activities.map((act, idx) => (
-                      <Box key={idx} display="flex" gap={1} py={0.5}>
-                        <FormControl fullWidth>
-                          <InputLabel id="form-select">Activity</InputLabel>
-                          <Select
-                            labelId="form-select"
-                            id="demo-simple-select"
-                            label="Activity"
+                    {selectedActivities.map((act, idx) => {
+                      return (
+                        <Box key={idx} display="flex" gap={1} py={0.5}>
+                          <FormControl fullWidth>
+                            <InputLabel id="form-select">Activity</InputLabel>
+                            <Select
+                              labelId="form-select"
+                              id="demo-simple-select"
+                              label="Activity"
+                              size={belowMdMatches ? "small" : "medium"}
+                              value={act}
+                              onChange={(e) =>
+                                setSelectedActivities((prev) => {
+                                  const acts = [...prev];
+                                  acts[idx] = e.target.value;
+                                  return acts;
+                                })
+                              }
+                            >
+                              {activities.length > 0 &&
+                                activities.map((item) => (
+                                  <MenuItem key={item.id} value={item.id}>
+                                    {item.name}
+                                  </MenuItem>
+                                ))}
+                            </Select>
+                          </FormControl>
+                          <Button
+                            color="error"
+                            onClick={() => removeActivity(idx)}
                             size={belowMdMatches ? "small" : "medium"}
-                            value={act.id}
                           >
-                            {/* {activityOptions.length > 0 &&
-                              activities.map((item) => (
-                                <MenuItem key={item.id} value={item.id}>
-                                  {item.name}
-                                </MenuItem>
-                              ))} */}
-                            <MenuItem value={1}>Concert</MenuItem>
-                            <MenuItem value={2}>Museum</MenuItem>
-                          </Select>
-                        </FormControl>
-                        <Button
-                          color="error"
-                          onClick={() => removeActivity(idx)}
-                          size={belowMdMatches ? "small" : "medium"}
-                        >
-                          <Close />
-                        </Button>
-                      </Box>
-                    ))}
+                            <Close />
+                          </Button>
+                        </Box>
+                      );
+                    })}
                   </Grid>
                 )}
               </Grid>
@@ -315,11 +329,11 @@ export default function PlanForm(props: PlanFormProps) {
           <Button
             type="submit"
             variant="contained"
-            color="success"
-            startIcon={<Add />}
+            color={props.id ? "warning" : "success"}
+            startIcon={props.id ? <Edit /> : <Add />}
             fullWidth
           >
-            NEW PLAN
+            {props.id ? "Edit Plan" : "New Plan"}
           </Button>
         </Grid>
       </Grid>
